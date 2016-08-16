@@ -1,0 +1,35 @@
+<div class="movie">
+  {{#if model.Loading}}
+    {{loader-component}}
+  {{else}}
+    {{#if model.results.Response}}
+      <table>
+        <tr>
+          <td class="poster">
+            <img src="{{image-helper model.results.Poster}}" alt="{{model.results.Title}}" height="550px" width="388px">
+          </td>
+          <td class="movie-data">
+            <h1>{{model.results.Title}}</h1>
+            <p><span class="key">Type</span> : {{model.results.Type}}</p>
+            <p><span class="key">Actors</span> : {{model.results.Actors}}</p>
+            <p><span class="key">Director</span> : {{model.results.Director}}. <span class="key">Writer</span>: {{model.results.Writer}}</p>
+            <p><span class="key">Language</span>: {{model.results.Language}}. <span class="key">Country</span>: {{model.results.Country}}</p>
+            <p><span class="key">Released</span>: {{model.results.Released}}. <span class="key">Run Time</span>: {{model.results.Runtime}}</p>
+            <p><span class="key">Genre</span>: {{model.results.Genre}}</p>
+            <p><span class="key">Plot</span>: {{model.results.Plot}}</p>
+            <p><span class="key">Awards</span>: {{model.results.Awards}}</p>
+            <p><span class="key">BoxOffice</span> : {{model.results.BoxOffice}}</p>
+            <p><span class="key">imdbRating</span>: {{model.results.imdbRating}}</p>
+            <p><span class="key">tomatoRating</span>: {{model.results.tomatoRating}} <a href="{{model.results.tomatoURL}}" target="_blank">Rotten Tomatoes</a></p>
+            <p><span class="key">Production</span>: {{model.results.Production}}</p>
+            <p><span class="key">Website</span>: {{model.results.Website}}</p>
+            <p><span class="key">DVD</span>: {{model.results.DVD}}</p>
+          </td>
+        </tr>
+      </table>
+    {{else}}
+      <h1>Something went wrong !</h1>
+    {{/if}}
+  {{/if}}
+</div>
+{{outlet}}

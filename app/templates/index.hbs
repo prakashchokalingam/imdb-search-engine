@@ -1,0 +1,28 @@
+<div class="search">
+  <div class="search-title">
+    <h1>IMDB Search Engine</h1></div>
+  <div class="search-input">
+    {{input name="search-value" class="search-box" value=search-value placeholder="Enter movie name here... " required="true" key-up="setSearchValue"}}
+    <button class="search-btn" title="click to search" {{action "sendSearchApi"}}><i class="material-icons">&#xE8B6;</i></button>
+    <div>
+      {{#if search-value}}
+        <a href="#" class="advance-search" {{action "EnableAdvanceSearch" preventDefault=true}}>+ Advance search </a><small class="hint">search for : {{search-value}} , type : {{model.type}}  {{#if search-year }} , year : {{search-year}} {{/if}} </small>
+      {{/if}}
+    </div>
+    {{#if model.advanceSearch}}
+      <div class="advance-search-panel">
+        <div class="search-type-group">
+          <span class="search-type all" {{action "setSearchType" "all" this on="click" }}>All</span>
+          <span class="search-type movies active" {{action 'setSearchType' "movies"}}>Movie</span>
+          <span class="search-type series" {{action 'setSearchType' "series"}}>Series</span>
+          <span class="search-type episodes" {{action 'setSearchType' "episodes"}}>Episodes</span>
+        </div>
+        <label for="search-year"> Year :</label>
+        {{input type="number" name="search-year" class="search-year" value=search-year placeholder="Enter year" key-up="setSearchYear"}}
+      </div>
+    {{/if}}
+  </div>
+  {{partial "breadcrumbs"}}
+  {{outlet}}
+</div>
+{{partial "footer"}}

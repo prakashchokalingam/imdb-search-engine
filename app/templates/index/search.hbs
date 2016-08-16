@@ -1,0 +1,36 @@
+<div class="search-results">
+  {{#if model.loading}}
+    {{loader-component}}
+  {{else}}
+    {{#if model.results.Response}}
+      <h3>Results Found : {{model.results.totalResults}}</h3>
+      <div class="search-data">
+        {{#each model.results.Search as |movie|}}
+          {{#link-to 'index.view' movie.imdbID movie.Title title=movie.Title}}
+            <table>
+              <tr>
+                <td><img src="{{image-helper movie.Poster}}" alt="{{movie.Title}}" height="100px" width="100px"></td>
+                <td>
+                  <p class="movie-name">{{movie.Title}}</p>
+                  <p>Type: {{movie.Type}} </p>
+                  <p> Year: {{movie.Year}} </p>
+                </td>
+              </tr>
+            </table>
+          {{/link-to}}
+        {{/each}}
+        {{#if model.loadmore}}
+          {{loader-component}}
+        {{/if}}
+          <div {{action "loadMore"}} class="loadmore-panel {{load-more model.results.totalResults model.results.Search.length 'boolean'}}">
+            <div class="load-more">
+              Load More ({{load-more model.results.totalResults model.results.Search.length "count"}})
+            </div>
+          </div>
+      </div>
+    {{else}}
+      <h2>{{model.results.Error}}</h2>
+    {{/if}}
+  {{/if}}
+</div>
+{{outlet}}

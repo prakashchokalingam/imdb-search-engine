@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>EmberImdbSearch</title>
+    <meta name="description" content="IMDB movies search application using Ember Js">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:url"         content="prakashchokalingam.github.io//imdb-search-engine" />
+    <meta property="og:type"        content="application" />
+    <meta property="og:title"       content="IMDB Search Engine using Ember JS" />
+    <meta property="og:description" content="Simple movie database search engine usin IMDB api and Ember 2.0" />
+    <meta property="og:image"       content="https://s3.postimg.io/w1sd2k76b/Screen_Shot_2016_08_16_at_10_52_58_PM.png"" />
+    <link rel="favicon" href="{{rootURL}}assets/images/favicon.ico" />
+    {{content-for "head"}}
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{{rootURL}}assets/vendor.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/ember-imdb-search.css">
+
+    {{content-for "head-footer"}}
+  </head>
+  <body>
+    {{content-for "body"}}
+
+    <script src="{{rootURL}}assets/vendor.js"></script>
+    <script src="{{rootURL}}assets/ember-imdb-search.js"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-82631549-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    {{content-for "body-footer"}}
+  </body>
+</html>
