@@ -39,7 +39,8 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    ENV.baseURL = '/imdb-search-engine/';
+   ENV.locationType = 'none';
   }
 
   return ENV;
