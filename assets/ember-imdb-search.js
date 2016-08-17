@@ -2259,7 +2259,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("ember-imdb-search/app")["default"].create({"name":"ember-imdb-search","version":"0.0.0+402d35cd"});
+  require("ember-imdb-search/app")["default"].create({"name":"ember-imdb-search","version":"0.0.0+667e8c6e"});
 }
 
 /* jshint ignore:end */
