@@ -1,5 +1,6 @@
 # Ember-imdb-search
-
+A simple Ember Application using IMDB API 
+ #Demo https://prakashchokalingam.github.io/imdb-search-engine/
 This README outlines the details of collaborating on this Ember application.
 A short introduction of this app could easily go here.
 
