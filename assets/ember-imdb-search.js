@@ -40,7 +40,7 @@ define("ember-imdb-search/helpers/image-helper", ["exports", "ember"], function 
 
   function imageHelper(params /*, hash*/) {
     if (params[0] === "N/A") {
-      params[0] = "/assets/images/NA.png";
+      params[0] = "imdb-search-engine/assets/images/NA.png";
     }
     return params;
   }
