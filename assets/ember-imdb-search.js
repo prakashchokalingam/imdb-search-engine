@@ -327,7 +327,7 @@ define("ember-imdb-search/routes/index/search", ["exports", "ember"], function (
       if (params.type == "all") {
         params.type = "";
       }
-      var url = "http://www.omdbapi.com/?s=" + params.value + "&type=" + params.type + "&y=" + params.year;
+      var url = "https://www.omdbapi.com/?s=" + params.value + "&type=" + params.type + "&y=" + params.year;
       modeldata.set('url', url);
       this.loadData(url, true);
       return modeldata;
@@ -376,7 +376,7 @@ define('ember-imdb-search/routes/index/view', ['exports', 'ember'], function (ex
       Movie.set('Loading', true);
     },
     model: function model(params) {
-      var url = 'http://www.omdbapi.com/?i=' + params.id + '&tomatoes=true';
+      var url = 'https://www.omdbapi.com/?i=' + params.id + '&tomatoes=true';
       $.getJSON(url, function () {}).done(function (data) {
         if (data.Response == "True") {
           data.Response = true;
