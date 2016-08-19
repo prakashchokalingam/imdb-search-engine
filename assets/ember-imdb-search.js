@@ -355,7 +355,6 @@ define("ember-imdb-search/routes/index/search", ["exports", "ember"], function (
           var _this = _this2;
           $(window).on("scroll.loadMore", function (e) {
             if ($(window).height() + $(window).scrollTop() == $(document).height()) {
-              console.log("bottom");
               _this.send('loadMore');
             }
           });
@@ -1744,6 +1743,7 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
             var el1 = dom.createTextNode("            ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("div");
+            dom.setAttribute(el1, "style", "padding-bottom: 30px;");
             var el2 = dom.createTextNode("\n              ");
             dom.appendChild(el1, el2);
             var el2 = dom.createElement("div");
@@ -2644,7 +2644,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("ember-imdb-search/app")["default"].create({"name":"ember-imdb-search","version":"0.0.0+3560aef0"});
+  require("ember-imdb-search/app")["default"].create({"name":"ember-imdb-search","version":"0.0.0+86df1b79"});
 }
 
 /* jshint ignore:end */

@@ -92,6 +92,7 @@ p span.key {
     -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); } }
 
 .footer {
+  padding-top: 10px;
   color: white;
   background: black;
   padding-top: 10px;

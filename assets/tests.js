@@ -1041,7 +1041,7 @@ define('ember-imdb-search/tests/routes/index/search.jshint', ['exports'], functi
   QUnit.module('JSHint | routes/index/search.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'routes/index/search.js should pass jshint.\nroutes/index/search.js: line 12, col 21, Expected \'===\' and instead saw \'==\'.\nroutes/index/search.js: line 25, col 58, Expected \'===\' and instead saw \'==\'.\nroutes/index/search.js: line 24, col 47, \'e\' is defined but never used.\nroutes/index/search.js: line 24, col 7, \'$\' is not defined.\nroutes/index/search.js: line 25, col 13, \'$\' is not defined.\nroutes/index/search.js: line 25, col 34, \'$\' is not defined.\nroutes/index/search.js: line 25, col 59, \'$\' is not defined.\nroutes/index/search.js: line 33, col 5, \'$\' is not defined.\nroutes/index/search.js: line 51, col 11, \'$\' is not defined.\n\n9 errors');
+    assert.ok(false, 'routes/index/search.js should pass jshint.\nroutes/index/search.js: line 12, col 21, Expected \'===\' and instead saw \'==\'.\nroutes/index/search.js: line 25, col 58, Expected \'===\' and instead saw \'==\'.\nroutes/index/search.js: line 24, col 47, \'e\' is defined but never used.\nroutes/index/search.js: line 24, col 7, \'$\' is not defined.\nroutes/index/search.js: line 25, col 13, \'$\' is not defined.\nroutes/index/search.js: line 25, col 34, \'$\' is not defined.\nroutes/index/search.js: line 25, col 59, \'$\' is not defined.\nroutes/index/search.js: line 32, col 5, \'$\' is not defined.\nroutes/index/search.js: line 50, col 11, \'$\' is not defined.\n\n9 errors');
   });
 });
 define('ember-imdb-search/tests/routes/index/view.jshint', ['exports'], function (exports) {
