@@ -1,0 +1,106 @@
+html {
+  height: 100%; }
+
+body {
+  width: 100%;
+  margin: 0; }
+
+a {
+  text-decoration: none; }
+
+.magnifier {
+  position: relative;
+  bottom: 33px;
+  left: 93%;
+  cursor: pointer; }
+
+.title a {
+  color: #57beff; }
+
+.chip {
+  cursor: pointer; }
+
+.chip.active {
+  background: #57beff; }
+
+.search-year {
+  width: 265px !important; }
+
+input {
+  margin-bottom: 0px !important; }
+
+input:focus {
+  border-bottom: 1px solid #57beff !important;
+  box-shadow: 0 1px 0 0 #57beff !important; }
+
+.card {
+  overflow: hidden; }
+
+.card.search {
+  height: 150px; }
+
+p i.material-icons {
+  color: #999;
+  position: relative;
+  top: 7px; }
+
+p i.director {
+  transform: rotateY(140deg); }
+
+div.loadmore {
+  height: 50px; }
+
+p span.key {
+  font-weight: bold; }
+
+.view.card {
+  height: 800px;
+  overflow: scroll; }
+
+.breadcrumbs {
+  background: #E6E6E6;
+  position: relative;
+  top: -10px; }
+  .breadcrumbs i {
+    color: black; }
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  background-color: #57beff;
+  margin: 100px auto;
+  -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
+  animation: sk-rotateplane 1.2s infinite ease-in-out; }
+
+@-webkit-keyframes sk-rotateplane {
+  0% {
+    -webkit-transform: perspective(120px); }
+  50% {
+    -webkit-transform: perspective(120px) rotateY(180deg); }
+  100% {
+    -webkit-transform: perspective(120px) rotateY(180deg) rotateX(180deg); } }
+
+@keyframes sk-rotateplane {
+  0% {
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg); }
+  50% {
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); }
+  100% {
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); } }
+
+.footer {
+  color: white;
+  background: black;
+  padding-top: 10px;
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  text-align: center; }
+  .footer a {
+    color: white; }
+
+/*# sourceMappingURL=ember-imdb-search.css.map */
