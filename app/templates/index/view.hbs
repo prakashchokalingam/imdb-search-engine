@@ -1,35 +1,40 @@
-<div class="movie">
+<div class="row">
+  <div class="col s12">
   {{#if model.Loading}}
     {{loader-component}}
   {{else}}
     {{#if model.results.Response}}
-      <table>
-        <tr>
-          <td class="poster">
-            <img src="{{image-helper model.results.Poster}}" alt="{{model.results.Title}}" height="550px" width="388px">
-          </td>
-          <td class="movie-data">
-            <h1>{{model.results.Title}}</h1>
-            <p><span class="key">Type</span> : {{model.results.Type}}</p>
-            <p><span class="key">Actors</span> : {{model.results.Actors}}</p>
-            <p><span class="key">Director</span> : {{model.results.Director}}. <span class="key">Writer</span>: {{model.results.Writer}}</p>
-            <p><span class="key">Language</span>: {{model.results.Language}}. <span class="key">Country</span>: {{model.results.Country}}</p>
-            <p><span class="key">Released</span>: {{model.results.Released}}. <span class="key">Run Time</span>: {{model.results.Runtime}}</p>
-            <p><span class="key">Genre</span>: {{model.results.Genre}}</p>
-            <p><span class="key">Plot</span>: {{model.results.Plot}}</p>
-            <p><span class="key">Awards</span>: {{model.results.Awards}}</p>
-            <p><span class="key">BoxOffice</span> : {{model.results.BoxOffice}}</p>
-            <p><span class="key">imdbRating</span>: {{model.results.imdbRating}}</p>
-            <p><span class="key">tomatoRating</span>: {{model.results.tomatoRating}} <a href="{{model.results.tomatoURL}}" target="_blank">Rotten Tomatoes</a></p>
-            <p><span class="key">Production</span>: {{model.results.Production}}</p>
-            <p><span class="key">Website</span>: {{model.results.Website}}</p>
-            <p><span class="key">DVD</span>: {{model.results.DVD}}</p>
-          </td>
-        </tr>
-      </table>
+    <div class=" view card">
+      <div class="col s12 m3 l3">
+        <img src="{{image-helper model.results.Poster}}" data-caption="{{model.results.Title}}"  alt="{{model.results.Title}}" class="img responsive-img zoombox" max-width="100%">
+        <div class="left-align">
+          <span><small> click to enlarge </small></span>
+        </div>
+      </div>
+      <div class="col s12 m8 l8">
+        <a href="{{window.location.url}}"><h3>{{model.results.Title}}</h3></a>
+        <p><span class="key">Type</span> : <i class="material-icons">&#xE43A;</i> {{model.results.Type}}</p>
+        <p><span class="key">Actors</span> : <i class="material-icons">&#xE7EF;</i> {{model.results.Actors}}</p>
+        <p><span class="key">Director</span> : <i class="material-icons">&#xE04B;</i> {{model.results.Director}}. <span class="key">Writer</span>: <i class="material-icons">&#xE85D;</i> {{model.results.Writer}}</p>
+        <p><span class="key">Language</span>: <i class="material-icons">&#xE91F;</i> {{model.results.Language}}. <span class="key">Country</span>: <i class="material-icons">&#xE894;</i> {{model.results.Country}}</p>
+        <p><span class="key">Released</span>: <i class="material-icons">&#xE862;</i> {{model.results.Released}}. <span class="key">Run Time </span>: <i class="material-icons">&#xE01B;</i> {{model.results.Runtime}}</p>
+        <p><span class="key">Genre</span>: <i class="material-icons">&#xE903;</i> {{model.results.Genre}}</p>
+        <p><span class="key">Plot</span>:  <i class="material-icons">&#xE85A;</i> {{model.results.Plot}}</p>
+        <p><span class="key">Awards</span>: <i class="material-icons">&#xE031;</i> {{model.results.Awards}}</p>
+        <p><span class="key">BoxOffice</span> : <i class="material-icons">&#xE263;</i> {{model.results.BoxOffice}}</p>
+        <p><span class="key">imdbRating</span>: <i class="material-icons">&#xE838;</i> {{model.results.imdbRating}}</p>
+        <p><span class="key">tomatoRating</span>: <i class="material-icons">&#xE83A;</i> {{model.results.tomatoRating}} <a href="{{model.results.tomatoURL}}" target="_blank">Rotten Tomatoes</a></p>
+        <p><span class="key">Production</span>: <i class="material-icons">&#xE870;</i> {{model.results.Production}}</p>
+        <p><span class="key">Website</span>:  <i class="material-icons">&#xE051;</i> {{model.results.Website}}</p>
+        <p><span class="key">DVD</span>: <i class="material-icons">&#xE019;</i>{{model.results.DVD}}</p>
+      </div>
+    </div>
+    <!-- to init zoom box -->
+    {{zoombox-init}}
     {{else}}
       <h1>Something went wrong !</h1>
     {{/if}}
   {{/if}}
+</div>
 </div>
 {{outlet}}

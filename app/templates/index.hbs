@@ -1,28 +1,31 @@
-<div class="search">
-  <div class="search-title">
-    <h1>IMDB Search Engine</h1></div>
-  <div class="search-input">
-    {{input name="search-value" class="search-box" value=search-value placeholder="Enter movie name here... " required="true" key-up="setSearchValue"}}
-    <button class="search-btn" title="click to search" {{action "sendSearchApi"}}><i class="material-icons">&#xE8B6;</i></button>
+<div class="row">
+  <div class="container">
     <div>
+      <h3 class="center-align title">{{link-to  "IMDB Search Engine" "index" }}</h3>
+    </div>
+    <div class="search-input">
+      {{input name="search-value" class="search-box" value=search-value placeholder="Enter movie name here... " required="true" key-up="setSearchValue"}}
+      <i class="material-icons magnifier" {{action "sendSearchApi"}}>&#xE8B6;</i>
       {{#if search-value}}
-        <a href="#" class="advance-search" {{action "EnableAdvanceSearch" preventDefault=true}}>+ Advance search </a><small class="hint">search for : {{search-value}} , type : {{model.type}}  {{#if search-year }} , year : {{search-year}} {{/if}} </small>
+        <div class="col s12 right-align">
+          <h6>
+            <a href="#" class="" {{action "EnableAdvanceSearch" preventDefault=true}}>+ Advance search </a> <small class="hint"> search for : <b>{{search-value}}</b> , type : <b>{{model.type}}</b>  {{#if search-year }} , year : <b>{{search-year}}</b> {{/if}} </small>
+          </h6>
+      </div>
       {{/if}}
     </div>
     {{#if model.advanceSearch}}
-      <div class="advance-search-panel">
-        <div class="search-type-group">
-          <span class="search-type all" {{action "setSearchType" "all" this on="click" }}>All</span>
-          <span class="search-type movies active" {{action 'setSearchType' "movies"}}>Movie</span>
-          <span class="search-type series" {{action 'setSearchType' "series"}}>Series</span>
-          <span class="search-type episodes" {{action 'setSearchType' "episodes"}}>Episodes</span>
+      <div class="row">
+        <div class="col l4 m4 s12 right right-align">
+            <span class="chip all" {{action "setSearchType" "all" this on="click" }}>All</span>
+            <span class="chip movie" {{action 'setSearchType' "movie"}}>Movie</span>
+            <span class="chip series" {{action 'setSearchType' "series"}}>Series</span>
+            <span class="chip episodes" {{action 'setSearchType' "episodes"}}>Episodes</span>
+          {{input type="number" name="search-year" class="search-year" value=search-year placeholder="Enter year" key-up="setSearchYear"}}
         </div>
-        <label for="search-year"> Year :</label>
-        {{input type="number" name="search-year" class="search-year" value=search-year placeholder="Enter year" key-up="setSearchYear"}}
       </div>
     {{/if}}
   </div>
-  {{partial "breadcrumbs"}}
-  {{outlet}}
+   {{outlet}}
 </div>
 {{partial "footer"}}

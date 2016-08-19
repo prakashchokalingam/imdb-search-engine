@@ -8,7 +8,7 @@ export default Ember.Route.extend({
     Movie.set('Loading',true);
   },
   model(params) {
-    let url = `http://www.omdbapi.com/?i=${params.id}&tomatoes=true`;
+    let url = `https://www.omdbapi.com/?i=${params.id}&tomatoes=true`;
     $.getJSON(url,function(){
     }).done(function(data){
       if(data.Response == "True") {
@@ -23,5 +23,8 @@ export default Ember.Route.extend({
       Movie.set('results',custome_obj);
     });
     return Movie;
+  },
+  didInsertElement: function() {
+    console.log("x");
   }
 });

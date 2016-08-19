@@ -4,8 +4,8 @@ module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'ember-imdb-search',
     environment: environment,
-    rootURL: '/',
-    locationType: 'auto',
+    rootURL: '/imdb-search-engine/',
+    locationType: 'hash',
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
@@ -39,8 +39,6 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    ENV.baseURL = '/imdb-search-engine/';
-   ENV.locationType = 'none';
   }
 
   return ENV;

@@ -16,6 +16,11 @@ export default Ember.Route.extend({
   actions: {
     EnableAdvanceSearch: function() {
       assets.toggleProperty('advanceSearch');
+      let _this = this;
+      // wait till dom elements to render
+      Ember.run.later(function() {
+        _this.send('setSearchType',assets.type);;
+      },300);
     },
     setSearchValue: function(searchValue, event) {
       assets.set('search', searchValue);
@@ -25,9 +30,9 @@ export default Ember.Route.extend({
       }
     },
     setSearchType: function(value) {
-      $(".search-type").removeClass('active');
-      let classname= `.search-type.${value}`;
-      $(".search-type").removeClass('active');
+      console.log(value);
+      $(".chip").removeClass('active');
+      let classname= `.chip.${value}`;
       $(classname).addClass('active');
       assets.set('type',value);
     },

@@ -1,36 +1,45 @@
-<div class="search-results">
-  {{#if model.loading}}
-    {{loader-component}}
-  {{else}}
-    {{#if model.results.Response}}
-      <h3>Results Found : {{model.results.totalResults}}</h3>
-      <div class="search-data">
-        {{#each model.results.Search as |movie|}}
-          {{#link-to 'index.view' movie.imdbID movie.Title title=movie.Title}}
-            <table>
-              <tr>
-                <td><img src="{{image-helper movie.Poster}}" alt="{{movie.Title}}" height="100px" width="100px"></td>
-                <td>
-                  <p class="movie-name">{{movie.Title}}</p>
-                  <p>Type: {{movie.Type}} </p>
-                  <p> Year: {{movie.Year}} </p>
-                </td>
-              </tr>
-            </table>
-          {{/link-to}}
-        {{/each}}
-        {{#if model.loadmore}}
-          {{loader-component}}
-        {{/if}}
-          <div {{action "loadMore"}} class="loadmore-panel {{load-more model.results.totalResults model.results.Search.length 'boolean'}}">
-            <div class="load-more">
-              Load More ({{load-more model.results.totalResults model.results.Search.length "count"}})
-            </div>
-          </div>
-      </div>
+<div class="row">
+  <div class="col s12">
+    {{#if model.loading}}
+      {{loader-component}}
     {{else}}
-      <h2>{{model.results.Error}}</h2>
+      {{#if model.results.Response}}
+        <h4 class="center-align">Results Found : {{model.results.totalResults}}</h4>
+        <div class="row">
+          {{#each model.results.Search as |movie|}}
+              <div class="col s12 m4 l4">
+                {{#link-to 'index.view' movie.imdbID movie.Title title=movie.Title}}
+                <div class="card search hoverable">
+                  <div class="row">
+                    <div class="col s4">
+                      <img src="{{image-helper movie.Poster}}" alt="{{movie.Title}}" class="img responsive-img" height="100px" width="100px">
+                    </div>
+                    <div class="col s8">
+                      <h5 class="truncate">{{movie.Title}}</h5>
+                      <p><i class="small material-icons ">&#xE02C;</i> {{movie.Type}}</p>
+                      <p><i class="material-icons">&#xE924;</i> {{movie.Year}}</p>
+                    </div>
+                  </div>
+              </div>
+              {{/link-to}}
+
+            </div>
+          {{/each}}
+        </div>
+          {{#if model.loadmore}}
+            {{loader-component}}
+          {{/if}}
+            <div class="row {{load-more model.results.totalResults model.results.Search.length 'boolean'}}">
+              <div class="col s12 card loadmore">
+                <h5 class="center-align"> Loading ....  {{load-more model.results.totalResults model.results.Search.length "count"}} more </h5>
+              </div>
+            </div>
+      {{else}}
+      <div class="row card hoverable center-align">
+        <h2>{{model.results.Error}}</h2>
+      </div>
+      {{/if}}
     {{/if}}
-  {{/if}}
+  </div>
 </div>
 {{outlet}}

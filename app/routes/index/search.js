@@ -12,7 +12,7 @@ export default Ember.Route.extend({
     if(params.type=="all") {
       params.type = "";
     }
-    let url = `http://www.omdbapi.com/?s=${params.value}&type=${params.type}&y=${params.year}`;
+    let url = `https://www.omdbapi.com/?s=${params.value}&type=${params.type}&y=${params.year}`;
     modeldata.set('url', url);
     this.loadData(url, true);
     return modeldata;
@@ -20,6 +20,13 @@ export default Ember.Route.extend({
   loadData: function(url, initload = false) {
     if(initload) {
       modeldata.set('loading',true);
+      let _this = this;
+      $(window).on("scroll.loadMore",function(e){
+         if($(window).height() + $(window).scrollTop() == $(document).height()) {
+           console.log("bottom");
+           _this.send('loadMore');
+         }
+      });
     } else {
       modeldata.set('loadmore',true);
     }
@@ -34,9 +41,16 @@ export default Ember.Route.extend({
         modeldata.set('page', 1);
         modeldata.set('loading',false);
       } else {
-        let newArr = modeldata.get('results').Search.concat(data.Search);
-        modeldata.set('results.Search', newArr);
-        modeldata.set('loadmore',false);
+        if(data.Response) {
+          let newArr = modeldata.get('results').Search.concat(data.Search);
+          modeldata.set('results.Search', newArr);
+          modeldata.set('loadmore',false);
+        }
+        else {
+          modeldata.set('loadmore',false);
+          $(window).off('.loadMore');
+        }
+
       }
     }).error(function() {});
   },
