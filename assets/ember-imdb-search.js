@@ -2004,7 +2004,7 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
             var el2 = dom.createTextNode("\n      ");
             dom.appendChild(el1, el2);
             var el2 = dom.createElement("div");
-            dom.setAttribute(el2, "class", "col s12 m3 l3");
+            dom.setAttribute(el2, "class", "col s12 m4 l4");
             var el3 = dom.createTextNode("\n        ");
             dom.appendChild(el2, el3);
             var el3 = dom.createElement("img");
