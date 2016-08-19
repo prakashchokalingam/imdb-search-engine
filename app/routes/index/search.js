@@ -23,8 +23,7 @@ export default Ember.Route.extend({
       let _this = this;
       $(window).on("scroll.loadMore",function(e){
          if($(window).height() + $(window).scrollTop() == $(document).height()) {
-           console.log("bottom");
-           _this.send('loadMore');
+          //  _this.send('loadMore');
          }
       });
     } else {

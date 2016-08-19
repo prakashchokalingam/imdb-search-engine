@@ -29,7 +29,7 @@
           {{#if model.loadmore}}
             {{loader-component}}
           {{/if}}
-            <div class="row {{load-more model.results.totalResults model.results.Search.length 'boolean'}}">
+            <div class="row {{load-more model.results.totalResults model.results.Search.length 'boolean'}}" style="padding-bottom: 30px;">
               <div class="col s12 card loadmore">
                 <h5 class="center-align"> Loading ....  {{load-more model.results.totalResults model.results.Search.length "count"}} more </h5>
               </div>
