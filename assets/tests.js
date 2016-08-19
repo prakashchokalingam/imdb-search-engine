@@ -16,6 +16,15 @@ define('ember-imdb-search/tests/components/loader-component.jshint', ['exports']
     assert.ok(true, 'components/loader-component.js should pass jshint.');
   });
 });
+define('ember-imdb-search/tests/components/zoombox-init.jshint', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | components/zoombox-init.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(false, 'components/zoombox-init.js should pass jshint.\ncomponents/zoombox-init.js: line 5, col 5, \'$\' is not defined.\n\n1 error');
+  });
+});
 define('ember-imdb-search/tests/helpers/destroy-app', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = destroyApp;
 
@@ -47,7 +56,7 @@ define('ember-imdb-search/tests/helpers/load-more.jshint', ['exports'], function
   QUnit.module('JSHint | helpers/load-more.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'helpers/load-more.js should pass jshint.\nhelpers/load-more.js: line 4, col 18, Expected \'===\' and instead saw \'==\'.\nhelpers/load-more.js: line 6, col 22, Missing semicolon.\n\n2 errors');
+    assert.ok(false, 'helpers/load-more.js should pass jshint.\nhelpers/load-more.js: line 4, col 18, Expected \'===\' and instead saw \'==\'.\nhelpers/load-more.js: line 6, col 20, Missing semicolon.\n\n2 errors');
   });
 });
 define('ember-imdb-search/tests/helpers/module-for-acceptance', ['exports', 'qunit', 'ember', 'ember-imdb-search/tests/helpers/start-app', 'ember-imdb-search/tests/helpers/destroy-app'], function (exports, _qunit, _ember, _emberImdbSearchTestsHelpersStartApp, _emberImdbSearchTestsHelpersDestroyApp) {
@@ -832,6 +841,146 @@ define('ember-imdb-search/tests/integration/components/select-component-test.jsh
     assert.ok(true, 'integration/components/select-component-test.js should pass jshint.');
   });
 });
+define('ember-imdb-search/tests/integration/components/zoombox-init-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {
+
+  (0, _emberQunit.moduleForComponent)('zoombox-init', 'Integration | Component | zoombox init', {
+    integration: true
+  });
+
+  (0, _emberQunit.test)('it renders', function (assert) {
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.on('myAction', function(val) { ... });
+
+    this.render(Ember.HTMLBars.template((function () {
+      return {
+        meta: {
+          'revision': 'Ember@2.7.0',
+          'loc': {
+            'source': null,
+            'start': {
+              'line': 1,
+              'column': 0
+            },
+            'end': {
+              'line': 1,
+              'column': 16
+            }
+          }
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createComment('');
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+          dom.insertBoundary(fragment, 0);
+          dom.insertBoundary(fragment, null);
+          return morphs;
+        },
+        statements: [['content', 'zoombox-init', ['loc', [null, [1, 0], [1, 16]]], 0, 0, 0, 0]],
+        locals: [],
+        templates: []
+      };
+    })()));
+
+    assert.equal(this.$().text().trim(), '');
+
+    // Template block usage:
+    this.render(Ember.HTMLBars.template((function () {
+      var child0 = (function () {
+        return {
+          meta: {
+            'revision': 'Ember@2.7.0',
+            'loc': {
+              'source': null,
+              'start': {
+                'line': 2,
+                'column': 4
+              },
+              'end': {
+                'line': 4,
+                'column': 4
+              }
+            }
+          },
+          isEmpty: false,
+          arity: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          buildFragment: function buildFragment(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode('      template block text\n');
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          buildRenderNodes: function buildRenderNodes() {
+            return [];
+          },
+          statements: [],
+          locals: [],
+          templates: []
+        };
+      })();
+
+      return {
+        meta: {
+          'revision': 'Ember@2.7.0',
+          'loc': {
+            'source': null,
+            'start': {
+              'line': 1,
+              'column': 0
+            },
+            'end': {
+              'line': 5,
+              'column': 2
+            }
+          }
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode('\n');
+          dom.appendChild(el0, el1);
+          var el1 = dom.createComment('');
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode('  ');
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+          var morphs = new Array(1);
+          morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+          return morphs;
+        },
+        statements: [['block', 'zoombox-init', [], [], 0, null, ['loc', [null, [2, 4], [4, 21]]]]],
+        locals: [],
+        templates: [child0]
+      };
+    })()));
+
+    assert.equal(this.$().text().trim(), 'template block text');
+  });
+});
+define('ember-imdb-search/tests/integration/components/zoombox-init-test.jshint', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | integration/components/zoombox-init-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'integration/components/zoombox-init-test.js should pass jshint.');
+  });
+});
 define('ember-imdb-search/tests/resolver.jshint', ['exports'], function (exports) {
   'use strict';
 
@@ -874,7 +1023,7 @@ define('ember-imdb-search/tests/routes/index.jshint', ['exports'], function (exp
   QUnit.module('JSHint | routes/index.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'routes/index.js should pass jshint.\nroutes/index.js: line 28, col 7, \'$\' is not defined.\nroutes/index.js: line 30, col 7, \'$\' is not defined.\nroutes/index.js: line 31, col 7, \'$\' is not defined.\n\n3 errors');
+    assert.ok(false, 'routes/index.js should pass jshint.\nroutes/index.js: line 22, col 49, Unnecessary semicolon.\nroutes/index.js: line 34, col 7, \'$\' is not defined.\nroutes/index.js: line 36, col 7, \'$\' is not defined.\n\n3 errors');
   });
 });
 define('ember-imdb-search/tests/routes/index/missurl.jshint', ['exports'], function (exports) {
@@ -892,7 +1041,7 @@ define('ember-imdb-search/tests/routes/index/search.jshint', ['exports'], functi
   QUnit.module('JSHint | routes/index/search.js');
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
-    assert.ok(false, 'routes/index/search.js should pass jshint.\nroutes/index/search.js: line 12, col 21, Expected \'===\' and instead saw \'==\'.\nroutes/index/search.js: line 26, col 5, \'$\' is not defined.\n\n2 errors');
+    assert.ok(false, 'routes/index/search.js should pass jshint.\nroutes/index/search.js: line 12, col 21, Expected \'===\' and instead saw \'==\'.\nroutes/index/search.js: line 25, col 58, Expected \'===\' and instead saw \'==\'.\nroutes/index/search.js: line 24, col 47, \'e\' is defined but never used.\nroutes/index/search.js: line 24, col 7, \'$\' is not defined.\nroutes/index/search.js: line 25, col 13, \'$\' is not defined.\nroutes/index/search.js: line 25, col 34, \'$\' is not defined.\nroutes/index/search.js: line 25, col 59, \'$\' is not defined.\nroutes/index/search.js: line 33, col 5, \'$\' is not defined.\nroutes/index/search.js: line 51, col 11, \'$\' is not defined.\n\n9 errors');
   });
 });
 define('ember-imdb-search/tests/routes/index/view.jshint', ['exports'], function (exports) {
@@ -972,6 +1121,25 @@ define('ember-imdb-search/tests/unit/helpers/placeholder-maker-test.jshint', ['e
   QUnit.test('should pass jshint', function (assert) {
     assert.expect(1);
     assert.ok(true, 'unit/helpers/placeholder-maker-test.js should pass jshint.');
+  });
+});
+define('ember-imdb-search/tests/unit/helpers/zoombox-test', ['exports', 'ember-imdb-search/helpers/zoombox', 'qunit'], function (exports, _emberImdbSearchHelpersZoombox, _qunit) {
+
+  (0, _qunit.module)('Unit | Helper | zoombox');
+
+  // Replace this with your real tests.
+  (0, _qunit.test)('it works', function (assert) {
+    var result = (0, _emberImdbSearchHelpersZoombox.zoombox)([42]);
+    assert.ok(result);
+  });
+});
+define('ember-imdb-search/tests/unit/helpers/zoombox-test.jshint', ['exports'], function (exports) {
+  'use strict';
+
+  QUnit.module('JSHint | unit/helpers/zoombox-test.js');
+  QUnit.test('should pass jshint', function (assert) {
+    assert.expect(1);
+    assert.ok(true, 'unit/helpers/zoombox-test.js should pass jshint.');
   });
 });
 define('ember-imdb-search/tests/unit/routes/back-test', ['exports', 'ember-qunit'], function (exports, _emberQunit) {

@@ -35,6 +35,13 @@ define('ember-imdb-search/components/app-version', ['exports', 'ember-cli-app-ve
 define('ember-imdb-search/components/loader-component', ['exports', 'ember'], function (exports, _ember) {
   exports['default'] = _ember['default'].Component.extend({});
 });
+define("ember-imdb-search/components/zoombox-init", ["exports", "ember"], function (exports, _ember) {
+  exports["default"] = _ember["default"].Component.extend({
+    didInsertElement: function didInsertElement() {
+      $(".zoombox").materialbox();
+    }
+  });
+});
 define("ember-imdb-search/helpers/image-helper", ["exports", "ember"], function (exports, _ember) {
   exports.imageHelper = imageHelper;
 
@@ -53,7 +60,7 @@ define("ember-imdb-search/helpers/load-more", ["exports", "ember"], function (ex
   function loadMore(params /*, hash*/) {
     if (params[2] == "boolean") {
       if (params[0] - params[1] <= 0) {
-        return "hidden";
+        return "hide";
       }
     } else {
       return params[0] - params[1];
@@ -282,6 +289,11 @@ define("ember-imdb-search/routes/index", ["exports", "ember"], function (exports
     actions: {
       EnableAdvanceSearch: function EnableAdvanceSearch() {
         assets.toggleProperty('advanceSearch');
+        var _this = this;
+        // wait till dom elements to render
+        _ember["default"].run.later(function () {
+          _this.send('setSearchType', assets.type);;
+        }, 300);
       },
       setSearchValue: function setSearchValue(searchValue, event) {
         assets.set('search', searchValue);
@@ -291,9 +303,9 @@ define("ember-imdb-search/routes/index", ["exports", "ember"], function (exports
         }
       },
       setSearchType: function setSearchType(value) {
-        $(".search-type").removeClass('active');
-        var classname = ".search-type." + value;
-        $(".search-type").removeClass('active');
+        console.log(value);
+        $(".chip").removeClass('active');
+        var classname = ".chip." + value;
         $(classname).addClass('active');
         assets.set('type', value);
       },
@@ -333,10 +345,21 @@ define("ember-imdb-search/routes/index/search", ["exports", "ember"], function (
       return modeldata;
     },
     loadData: function loadData(url) {
+      var _this2 = this;
+
       var initload = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
       if (initload) {
-        modeldata.set('loading', true);
+        (function () {
+          modeldata.set('loading', true);
+          var _this = _this2;
+          $(window).on("scroll.loadMore", function (e) {
+            if ($(window).height() + $(window).scrollTop() == $(document).height()) {
+              console.log("bottom");
+              _this.send('loadMore');
+            }
+          });
+        })();
       } else {
         modeldata.set('loadmore', true);
       }
@@ -351,9 +374,14 @@ define("ember-imdb-search/routes/index/search", ["exports", "ember"], function (
           modeldata.set('page', 1);
           modeldata.set('loading', false);
         } else {
-          var newArr = modeldata.get('results').Search.concat(data.Search);
-          modeldata.set('results.Search', newArr);
-          modeldata.set('loadmore', false);
+          if (data.Response) {
+            var newArr = modeldata.get('results').Search.concat(data.Search);
+            modeldata.set('results.Search', newArr);
+            modeldata.set('loadmore', false);
+          } else {
+            modeldata.set('loadmore', false);
+            $(window).off('.loadMore');
+          }
         }
       }).error(function () {});
     },
@@ -390,6 +418,9 @@ define('ember-imdb-search/routes/index/view', ['exports', 'ember'], function (ex
         Movie.set('results', custome_obj);
       });
       return Movie;
+    },
+    didInsertElement: function didInsertElement() {
+      console.log("x");
     }
   });
 });
@@ -503,12 +534,12 @@ define("ember-imdb-search/templates/breadcrumbs", ["exports"], function (exports
           "loc": {
             "source": null,
             "start": {
-              "line": 1,
-              "column": 24
+              "line": 2,
+              "column": 6
             },
             "end": {
-              "line": 1,
-              "column": 50
+              "line": 2,
+              "column": 79
             }
           },
           "moduleName": "ember-imdb-search/templates/breadcrumbs.hbs"
@@ -519,7 +550,16 @@ define("ember-imdb-search/templates/breadcrumbs", ["exports"], function (exports
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("home");
+          var el1 = dom.createElement("div");
+          var el2 = dom.createTextNode(" ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "material-icons");
+          var el3 = dom.createTextNode("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode(" ");
+          dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           return el0;
         },
@@ -538,12 +578,12 @@ define("ember-imdb-search/templates/breadcrumbs", ["exports"], function (exports
           "loc": {
             "source": null,
             "start": {
-              "line": 1,
-              "column": 53
+              "line": 5,
+              "column": 6
             },
             "end": {
-              "line": 1,
-              "column": 84
+              "line": 5,
+              "column": 77
             }
           },
           "moduleName": "ember-imdb-search/templates/breadcrumbs.hbs"
@@ -554,7 +594,16 @@ define("ember-imdb-search/templates/breadcrumbs", ["exports"], function (exports
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("forward");
+          var el1 = dom.createElement("div");
+          var el2 = dom.createTextNode(" ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "material-icons");
+          var el3 = dom.createTextNode("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode(" ");
+          dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           return el0;
         },
@@ -573,12 +622,12 @@ define("ember-imdb-search/templates/breadcrumbs", ["exports"], function (exports
           "loc": {
             "source": null,
             "start": {
-              "line": 1,
-              "column": 88
+              "line": 8,
+              "column": 6
             },
             "end": {
-              "line": 1,
-              "column": 113
+              "line": 8,
+              "column": 76
             }
           },
           "moduleName": "ember-imdb-search/templates/breadcrumbs.hbs"
@@ -589,7 +638,16 @@ define("ember-imdb-search/templates/breadcrumbs", ["exports"], function (exports
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("back");
+          var el1 = dom.createElement("div");
+          var el2 = dom.createTextNode(" ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("i");
+          dom.setAttribute(el2, "class", "material-icons");
+          var el3 = dom.createTextNode("");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode(" ");
+          dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           return el0;
         },
@@ -611,7 +669,7 @@ define("ember-imdb-search/templates/breadcrumbs", ["exports"], function (exports
             "column": 0
           },
           "end": {
-            "line": 2,
+            "line": 10,
             "column": 0
           }
         },
@@ -623,19 +681,37 @@ define("ember-imdb-search/templates/breadcrumbs", ["exports"], function (exports
       hasRendered: false,
       buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
+        var el1 = dom.createTextNode("    ");
+        dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "breadcrumb");
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" / ");
+        dom.setAttribute(el1, "class", "col s4");
+        var el2 = dom.createTextNode("\n      ");
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("  / ");
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n    ");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1, "class", "col s4 center-align");
+        var el2 = dom.createTextNode("\n      ");
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode(" ");
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n    ");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1, "class", "col s4");
+        var el2 = dom.createTextNode("\n      ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createComment("");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
@@ -643,14 +719,13 @@ define("ember-imdb-search/templates/breadcrumbs", ["exports"], function (exports
         return el0;
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-        var element0 = dom.childAt(fragment, [0]);
         var morphs = new Array(3);
-        morphs[0] = dom.createMorphAt(element0, 0, 0);
-        morphs[1] = dom.createMorphAt(element0, 2, 2);
-        morphs[2] = dom.createMorphAt(element0, 4, 4);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
+        morphs[1] = dom.createMorphAt(dom.childAt(fragment, [3]), 1, 1);
+        morphs[2] = dom.createMorphAt(dom.childAt(fragment, [5]), 1, 1);
         return morphs;
       },
-      statements: [["block", "link-to", ["index"], [], 0, null, ["loc", [null, [1, 24], [1, 50]]]], ["block", "link-to", ["forward"], [], 1, null, ["loc", [null, [1, 53], [1, 84]]]], ["block", "link-to", ["back"], [], 2, null, ["loc", [null, [1, 88], [1, 113]]]]],
+      statements: [["block", "link-to", ["forward"], [], 0, null, ["loc", [null, [2, 6], [2, 91]]]], ["block", "link-to", ["index"], [], 1, null, ["loc", [null, [5, 6], [5, 89]]]], ["block", "link-to", ["back"], [], 2, null, ["loc", [null, [8, 6], [8, 88]]]]],
       locals: [],
       templates: [child0, child1, child2]
     };
@@ -702,6 +777,48 @@ define("ember-imdb-search/templates/components/loader-component", ["exports"], f
     };
   })());
 });
+define("ember-imdb-search/templates/components/zoombox-init", ["exports"], function (exports) {
+  exports["default"] = Ember.HTMLBars.template((function () {
+    return {
+      meta: {
+        "revision": "Ember@2.7.0",
+        "loc": {
+          "source": null,
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 2,
+            "column": 0
+          }
+        },
+        "moduleName": "ember-imdb-search/templates/components/zoombox-init.hbs"
+      },
+      isEmpty: false,
+      arity: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      buildFragment: function buildFragment(dom) {
+        var el0 = dom.createDocumentFragment();
+        var el1 = dom.createComment("");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
+        dom.insertBoundary(fragment, 0);
+        return morphs;
+      },
+      statements: [["content", "yield", ["loc", [null, [1, 0], [1, 9]]], 0, 0, 0, 0]],
+      locals: [],
+      templates: []
+    };
+  })());
+});
 define("ember-imdb-search/templates/footer", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     return {
@@ -714,7 +831,7 @@ define("ember-imdb-search/templates/footer", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 4,
+            "line": 11,
             "column": 0
           }
         },
@@ -728,24 +845,49 @@ define("ember-imdb-search/templates/footer", ["exports"], function (exports) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("div");
         dom.setAttribute(el1, "class", "footer");
-        var el2 = dom.createTextNode("\n  ");
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("span");
-        var el3 = dom.createTextNode("Created in Ember JS by ");
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "row");
+        var el3 = dom.createTextNode("\n  ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("a");
-        dom.setAttribute(el3, "href", "http://facebook.com/prakashchokalingam");
-        dom.setAttribute(el3, "target", "_blank");
-        var el4 = dom.createTextNode("Prakash Chokalingam");
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3, "class", "col s12 breadcrumbs");
+        var el4 = dom.createTextNode("\n  ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode(" | ");
+        var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("a");
-        dom.setAttribute(el3, "href", "https://github.com/prakashchokalingam/imdb-search-engine");
-        dom.setAttribute(el3, "target", "_blank");
-        var el4 = dom.createTextNode("Fork it on Github");
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3, "class", "col s12");
+        var el4 = dom.createTextNode("\n      ");
         dom.appendChild(el3, el4);
+        var el4 = dom.createElement("span");
+        var el5 = dom.createTextNode("Created in Ember JS by ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("a");
+        dom.setAttribute(el5, "href", "http://facebook.com/prakashchokalingam");
+        dom.setAttribute(el5, "target", "_blank");
+        var el6 = dom.createTextNode("Prakash Chokalingam");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode(" | ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("a");
+        dom.setAttribute(el5, "href", "https://github.com/prakashchokalingam/imdb-search-engine");
+        dom.setAttribute(el5, "target", "_blank");
+        var el6 = dom.createTextNode("Fork it on Github");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n");
@@ -755,10 +897,12 @@ define("ember-imdb-search/templates/footer", ["exports"], function (exports) {
         dom.appendChild(el0, el1);
         return el0;
       },
-      buildRenderNodes: function buildRenderNodes() {
-        return [];
+      buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
+        var morphs = new Array(1);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0, 1, 1]), 1, 1);
+        return morphs;
       },
-      statements: [],
+      statements: [["inline", "partial", ["breadcrumbs"], [], ["loc", [null, [4, 2], [4, 27]]], 0, 0]],
       locals: [],
       templates: []
     };
@@ -860,6 +1004,41 @@ define("ember-imdb-search/templates/forward", ["exports"], function (exports) {
 define("ember-imdb-search/templates/index", ["exports"], function (exports) {
   exports["default"] = Ember.HTMLBars.template((function () {
     var child0 = (function () {
+      return {
+        meta: {
+          "revision": "Ember@2.7.0",
+          "loc": {
+            "source": null,
+            "start": {
+              "line": 4,
+              "column": 37
+            },
+            "end": {
+              "line": 4,
+              "column": 79
+            }
+          },
+          "moduleName": "ember-imdb-search/templates/index.hbs"
+        },
+        isEmpty: false,
+        arity: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        buildFragment: function buildFragment(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("IMDB Search Engine");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        buildRenderNodes: function buildRenderNodes() {
+          return [];
+        },
+        statements: [],
+        locals: [],
+        templates: []
+      };
+    })();
+    var child1 = (function () {
       var child0 = (function () {
         return {
           meta: {
@@ -867,12 +1046,12 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
             "loc": {
               "source": null,
               "start": {
-                "line": 9,
-                "column": 192
+                "line": 12,
+                "column": 198
               },
               "end": {
-                "line": 9,
-                "column": 238
+                "line": 12,
+                "column": 251
               }
             },
             "moduleName": "ember-imdb-search/templates/index.hbs"
@@ -885,7 +1064,9 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode(" , year : ");
             dom.appendChild(el0, el1);
-            var el1 = dom.createComment("");
+            var el1 = dom.createElement("b");
+            var el2 = dom.createComment("");
+            dom.appendChild(el1, el2);
             dom.appendChild(el0, el1);
             var el1 = dom.createTextNode(" ");
             dom.appendChild(el0, el1);
@@ -893,10 +1074,10 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
             var morphs = new Array(1);
-            morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
             return morphs;
           },
-          statements: [["content", "search-year", ["loc", [null, [9, 222], [9, 237]]], 0, 0, 0, 0]],
+          statements: [["content", "search-year", ["loc", [null, [12, 231], [12, 246]]], 0, 0, 0, 0]],
           locals: [],
           templates: []
         };
@@ -907,11 +1088,11 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
           "loc": {
             "source": null,
             "start": {
-              "line": 8,
+              "line": 9,
               "column": 6
             },
             "end": {
-              "line": 10,
+              "line": 15,
               "column": 6
             }
           },
@@ -925,27 +1106,46 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
           var el0 = dom.createDocumentFragment();
           var el1 = dom.createTextNode("        ");
           dom.appendChild(el0, el1);
-          var el1 = dom.createElement("a");
-          dom.setAttribute(el1, "href", "#");
-          dom.setAttribute(el1, "class", "advance-search");
-          var el2 = dom.createTextNode("+ Advance search ");
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1, "class", "col s12 right-align");
+          var el2 = dom.createTextNode("\n          ");
           dom.appendChild(el1, el2);
-          dom.appendChild(el0, el1);
-          var el1 = dom.createElement("small");
-          dom.setAttribute(el1, "class", "hint");
-          var el2 = dom.createTextNode("search for : ");
+          var el2 = dom.createElement("h6");
+          var el3 = dom.createTextNode("\n            ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("a");
+          dom.setAttribute(el3, "href", "#");
+          dom.setAttribute(el3, "class", "");
+          var el4 = dom.createTextNode("+ Advance search ");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(" ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("small");
+          dom.setAttribute(el3, "class", "hint");
+          var el4 = dom.createTextNode(" search for : ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createElement("b");
+          var el5 = dom.createComment("");
+          dom.appendChild(el4, el5);
+          dom.appendChild(el3, el4);
+          var el4 = dom.createTextNode(" , type : ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createElement("b");
+          var el5 = dom.createComment("");
+          dom.appendChild(el4, el5);
+          dom.appendChild(el3, el4);
+          var el4 = dom.createTextNode("  ");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createComment("");
+          dom.appendChild(el3, el4);
+          var el4 = dom.createTextNode(" ");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n          ");
+          dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode(" , type : ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("  ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode(" ");
+          var el2 = dom.createTextNode("\n      ");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
@@ -953,32 +1153,33 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element6 = dom.childAt(fragment, [1]);
-          var element7 = dom.childAt(fragment, [2]);
+          var element5 = dom.childAt(fragment, [1, 1]);
+          var element6 = dom.childAt(element5, [1]);
+          var element7 = dom.childAt(element5, [3]);
           var morphs = new Array(4);
           morphs[0] = dom.createElementMorph(element6);
-          morphs[1] = dom.createMorphAt(element7, 1, 1);
-          morphs[2] = dom.createMorphAt(element7, 3, 3);
+          morphs[1] = dom.createMorphAt(dom.childAt(element7, [1]), 0, 0);
+          morphs[2] = dom.createMorphAt(dom.childAt(element7, [3]), 0, 0);
           morphs[3] = dom.createMorphAt(element7, 5, 5);
           return morphs;
         },
-        statements: [["element", "action", ["EnableAdvanceSearch"], ["preventDefault", true], ["loc", [null, [9, 43], [9, 95]]], 0, 0], ["content", "search-value", ["loc", [null, [9, 150], [9, 166]]], 0, 0, 0, 0], ["content", "model.type", ["loc", [null, [9, 176], [9, 190]]], 0, 0, 0, 0], ["block", "if", [["get", "search-year", ["loc", [null, [9, 198], [9, 209]]], 0, 0, 0, 0]], [], 0, null, ["loc", [null, [9, 192], [9, 245]]]]],
+        statements: [["element", "action", ["EnableAdvanceSearch"], ["preventDefault", true], ["loc", [null, [12, 33], [12, 85]]], 0, 0], ["content", "search-value", ["loc", [null, [12, 145], [12, 161]]], 0, 0, 0, 0], ["content", "model.type", ["loc", [null, [12, 178], [12, 192]]], 0, 0, 0, 0], ["block", "if", [["get", "search-year", ["loc", [null, [12, 204], [12, 215]]], 0, 0, 0, 0]], [], 0, null, ["loc", [null, [12, 198], [12, 258]]]]],
         locals: [],
         templates: [child0]
       };
     })();
-    var child1 = (function () {
+    var child2 = (function () {
       return {
         meta: {
           "revision": "Ember@2.7.0",
           "loc": {
             "source": null,
             "start": {
-              "line": 12,
+              "line": 17,
               "column": 4
             },
             "end": {
-              "line": 23,
+              "line": 27,
               "column": 4
             }
           },
@@ -993,52 +1194,45 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
           var el1 = dom.createTextNode("      ");
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("div");
-          dom.setAttribute(el1, "class", "advance-search-panel");
+          dom.setAttribute(el1, "class", "row");
           var el2 = dom.createTextNode("\n        ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("div");
-          dom.setAttribute(el2, "class", "search-type-group");
-          var el3 = dom.createTextNode("\n          ");
+          dom.setAttribute(el2, "class", "col l4 m4 s12 right right-align");
+          var el3 = dom.createTextNode("\n            ");
           dom.appendChild(el2, el3);
           var el3 = dom.createElement("span");
-          dom.setAttribute(el3, "class", "search-type all");
+          dom.setAttribute(el3, "class", "chip all");
           var el4 = dom.createTextNode("All");
           dom.appendChild(el3, el4);
           dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n          ");
+          var el3 = dom.createTextNode("\n            ");
           dom.appendChild(el2, el3);
           var el3 = dom.createElement("span");
-          dom.setAttribute(el3, "class", "search-type movies active");
+          dom.setAttribute(el3, "class", "chip movie");
           var el4 = dom.createTextNode("Movie");
           dom.appendChild(el3, el4);
           dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n          ");
+          var el3 = dom.createTextNode("\n            ");
           dom.appendChild(el2, el3);
           var el3 = dom.createElement("span");
-          dom.setAttribute(el3, "class", "search-type series");
+          dom.setAttribute(el3, "class", "chip series");
           var el4 = dom.createTextNode("Series");
           dom.appendChild(el3, el4);
           dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n          ");
+          var el3 = dom.createTextNode("\n            ");
           dom.appendChild(el2, el3);
           var el3 = dom.createElement("span");
-          dom.setAttribute(el3, "class", "search-type episodes");
+          dom.setAttribute(el3, "class", "chip episodes");
           var el4 = dom.createTextNode("Episodes");
           dom.appendChild(el3, el4);
           dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n          ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createComment("");
+          dom.appendChild(el2, el3);
           var el3 = dom.createTextNode("\n        ");
           dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n        ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createElement("label");
-          dom.setAttribute(el2, "for", "search-year");
-          var el3 = dom.createTextNode(" Year :");
-          dom.appendChild(el2, el3);
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n        ");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createComment("");
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n      ");
           dom.appendChild(el1, el2);
@@ -1048,21 +1242,20 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
           return el0;
         },
         buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-          var element0 = dom.childAt(fragment, [1]);
+          var element0 = dom.childAt(fragment, [1, 1]);
           var element1 = dom.childAt(element0, [1]);
-          var element2 = dom.childAt(element1, [1]);
-          var element3 = dom.childAt(element1, [3]);
-          var element4 = dom.childAt(element1, [5]);
-          var element5 = dom.childAt(element1, [7]);
+          var element2 = dom.childAt(element0, [3]);
+          var element3 = dom.childAt(element0, [5]);
+          var element4 = dom.childAt(element0, [7]);
           var morphs = new Array(5);
-          morphs[0] = dom.createElementMorph(element2);
-          morphs[1] = dom.createElementMorph(element3);
-          morphs[2] = dom.createElementMorph(element4);
-          morphs[3] = dom.createElementMorph(element5);
-          morphs[4] = dom.createMorphAt(element0, 5, 5);
+          morphs[0] = dom.createElementMorph(element1);
+          morphs[1] = dom.createElementMorph(element2);
+          morphs[2] = dom.createElementMorph(element3);
+          morphs[3] = dom.createElementMorph(element4);
+          morphs[4] = dom.createMorphAt(element0, 9, 9);
           return morphs;
         },
-        statements: [["element", "action", ["setSearchType", "all", ["get", "this", ["loc", [null, [15, 71], [15, 75]]], 0, 0, 0, 0]], ["on", "click"], ["loc", [null, [15, 40], [15, 89]]], 0, 0], ["element", "action", ["setSearchType", "movies"], [], ["loc", [null, [16, 50], [16, 85]]], 0, 0], ["element", "action", ["setSearchType", "series"], [], ["loc", [null, [17, 43], [17, 78]]], 0, 0], ["element", "action", ["setSearchType", "episodes"], [], ["loc", [null, [18, 45], [18, 82]]], 0, 0], ["inline", "input", [], ["type", "number", "name", "search-year", "class", "search-year", "value", ["subexpr", "@mut", [["get", "search-year", ["loc", [null, [21, 75], [21, 86]]], 0, 0, 0, 0]], [], [], 0, 0], "placeholder", "Enter year", "key-up", "setSearchYear"], ["loc", [null, [21, 8], [21, 136]]], 0, 0]],
+        statements: [["element", "action", ["setSearchType", "all", ["get", "this", ["loc", [null, [20, 66], [20, 70]]], 0, 0, 0, 0]], ["on", "click"], ["loc", [null, [20, 35], [20, 84]]], 0, 0], ["element", "action", ["setSearchType", "movie"], [], ["loc", [null, [21, 37], [21, 71]]], 0, 0], ["element", "action", ["setSearchType", "series"], [], ["loc", [null, [22, 38], [22, 73]]], 0, 0], ["element", "action", ["setSearchType", "episodes"], [], ["loc", [null, [23, 40], [23, 77]]], 0, 0], ["inline", "input", [], ["type", "number", "name", "search-year", "class", "search-year", "value", ["subexpr", "@mut", [["get", "search-year", ["loc", [null, [24, 77], [24, 88]]], 0, 0, 0, 0]], [], [], 0, 0], "placeholder", "Enter year", "key-up", "setSearchYear"], ["loc", [null, [24, 10], [24, 138]]], 0, 0]],
         locals: [],
         templates: []
       };
@@ -1077,7 +1270,7 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
             "column": 0
           },
           "end": {
-            "line": 29,
+            "line": 32,
             "column": 0
           }
         },
@@ -1090,40 +1283,39 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
       buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "search");
+        dom.setAttribute(el1, "class", "row");
         var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "search-title");
+        dom.setAttribute(el2, "class", "container");
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
-        var el3 = dom.createElement("h1");
-        var el4 = dom.createTextNode("IMDB Search Engine");
+        var el3 = dom.createElement("div");
+        var el4 = dom.createTextNode("\n      ");
         dom.appendChild(el3, el4);
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("div");
-        dom.setAttribute(el2, "class", "search-input");
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createComment("");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createTextNode("\n    ");
-        dom.appendChild(el2, el3);
-        var el3 = dom.createElement("button");
-        dom.setAttribute(el3, "class", "search-btn");
-        dom.setAttribute(el3, "title", "click to search");
-        var el4 = dom.createElement("i");
-        dom.setAttribute(el4, "class", "material-icons");
-        var el5 = dom.createTextNode("");
+        var el4 = dom.createElement("h3");
+        dom.setAttribute(el4, "class", "center-align title");
+        var el5 = dom.createComment("");
         dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n    ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
+        dom.setAttribute(el3, "class", "search-input");
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createComment("");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n      ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("i");
+        dom.setAttribute(el4, "class", "material-icons magnifier");
+        var el5 = dom.createTextNode("");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
         var el4 = dom.createTextNode("\n");
         dom.appendChild(el3, el4);
         var el4 = dom.createComment("");
@@ -1138,11 +1330,7 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
         var el3 = dom.createTextNode("  ");
         dom.appendChild(el2, el3);
         dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n  ");
+        var el2 = dom.createTextNode("\n   ");
         dom.appendChild(el1, el2);
         var el2 = dom.createComment("");
         dom.appendChild(el1, el2);
@@ -1159,21 +1347,22 @@ define("ember-imdb-search/templates/index", ["exports"], function (exports) {
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var element8 = dom.childAt(fragment, [0]);
-        var element9 = dom.childAt(element8, [3]);
+        var element9 = dom.childAt(element8, [1]);
         var element10 = dom.childAt(element9, [3]);
+        var element11 = dom.childAt(element10, [3]);
         var morphs = new Array(7);
-        morphs[0] = dom.createMorphAt(element9, 1, 1);
-        morphs[1] = dom.createElementMorph(element10);
-        morphs[2] = dom.createMorphAt(dom.childAt(element9, [5]), 1, 1);
-        morphs[3] = dom.createMorphAt(element9, 7, 7);
-        morphs[4] = dom.createMorphAt(element8, 5, 5);
-        morphs[5] = dom.createMorphAt(element8, 7, 7);
+        morphs[0] = dom.createMorphAt(dom.childAt(element9, [1, 1]), 0, 0);
+        morphs[1] = dom.createMorphAt(element10, 1, 1);
+        morphs[2] = dom.createElementMorph(element11);
+        morphs[3] = dom.createMorphAt(element10, 5, 5);
+        morphs[4] = dom.createMorphAt(element9, 5, 5);
+        morphs[5] = dom.createMorphAt(element8, 3, 3);
         morphs[6] = dom.createMorphAt(fragment, 2, 2, contextualElement);
         return morphs;
       },
-      statements: [["inline", "input", [], ["name", "search-value", "class", "search-box", "value", ["subexpr", "@mut", [["get", "search-value", ["loc", [null, [5, 57], [5, 69]]], 0, 0, 0, 0]], [], [], 0, 0], "placeholder", "Enter movie name here... ", "required", "true", "key-up", "setSearchValue"], ["loc", [null, [5, 4], [5, 151]]], 0, 0], ["element", "action", ["sendSearchApi"], [], ["loc", [null, [6, 55], [6, 81]]], 0, 0], ["block", "if", [["get", "search-value", ["loc", [null, [8, 12], [8, 24]]], 0, 0, 0, 0]], [], 0, null, ["loc", [null, [8, 6], [10, 13]]]], ["block", "if", [["get", "model.advanceSearch", ["loc", [null, [12, 10], [12, 29]]], 0, 0, 0, 0]], [], 1, null, ["loc", [null, [12, 4], [23, 11]]]], ["inline", "partial", ["breadcrumbs"], [], ["loc", [null, [25, 2], [25, 27]]], 0, 0], ["content", "outlet", ["loc", [null, [26, 2], [26, 12]]], 0, 0, 0, 0], ["inline", "partial", ["footer"], [], ["loc", [null, [28, 0], [28, 20]]], 0, 0]],
+      statements: [["block", "link-to", ["index"], [], 0, null, ["loc", [null, [4, 37], [4, 79]]]], ["inline", "input", [], ["name", "search-value", "class", "search-box", "value", ["subexpr", "@mut", [["get", "search-value", ["loc", [null, [7, 59], [7, 71]]], 0, 0, 0, 0]], [], [], 0, 0], "placeholder", "Enter movie name here... ", "required", "true", "key-up", "setSearchValue"], ["loc", [null, [7, 6], [7, 153]]], 0, 0], ["element", "action", ["sendSearchApi"], [], ["loc", [null, [8, 42], [8, 68]]], 0, 0], ["block", "if", [["get", "search-value", ["loc", [null, [9, 12], [9, 24]]], 0, 0, 0, 0]], [], 1, null, ["loc", [null, [9, 6], [15, 13]]]], ["block", "if", [["get", "model.advanceSearch", ["loc", [null, [17, 10], [17, 29]]], 0, 0, 0, 0]], [], 2, null, ["loc", [null, [17, 4], [27, 11]]]], ["content", "outlet", ["loc", [null, [29, 3], [29, 13]]], 0, 0, 0, 0], ["inline", "partial", ["footer"], [], ["loc", [null, [31, 0], [31, 20]]], 0, 0]],
       locals: [],
-      templates: [child0, child1]
+      templates: [child0, child1, child2]
     };
   })());
 });
@@ -1269,12 +1458,12 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
           "loc": {
             "source": null,
             "start": {
-              "line": 2,
-              "column": 2
+              "line": 3,
+              "column": 4
             },
             "end": {
-              "line": 4,
-              "column": 2
+              "line": 5,
+              "column": 4
             }
           },
           "moduleName": "ember-imdb-search/templates/index/search.hbs"
@@ -1285,7 +1474,7 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
         hasRendered: false,
         buildFragment: function buildFragment(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("    ");
+          var el1 = dom.createTextNode("      ");
           dom.appendChild(el0, el1);
           var el1 = dom.createComment("");
           dom.appendChild(el0, el1);
@@ -1298,7 +1487,7 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["content", "loader-component", ["loc", [null, [3, 4], [3, 24]]], 0, 0, 0, 0]],
+        statements: [["content", "loader-component", ["loc", [null, [4, 6], [4, 26]]], 0, 0, 0, 0]],
         locals: [],
         templates: []
       };
@@ -1313,12 +1502,12 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
                 "loc": {
                   "source": null,
                   "start": {
-                    "line": 9,
-                    "column": 10
+                    "line": 11,
+                    "column": 16
                   },
                   "end": {
-                    "line": 20,
-                    "column": 10
+                    "line": 24,
+                    "column": 14
                   }
                 },
                 "moduleName": "ember-imdb-search/templates/index/search.hbs"
@@ -1329,57 +1518,72 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
               hasRendered: false,
               buildFragment: function buildFragment(dom) {
                 var el0 = dom.createDocumentFragment();
-                var el1 = dom.createTextNode("            ");
+                var el1 = dom.createTextNode("                ");
                 dom.appendChild(el0, el1);
-                var el1 = dom.createElement("table");
-                var el2 = dom.createTextNode("\n              ");
+                var el1 = dom.createElement("div");
+                dom.setAttribute(el1, "class", "card search hoverable");
+                var el2 = dom.createTextNode("\n                  ");
                 dom.appendChild(el1, el2);
-                var el2 = dom.createElement("tr");
-                var el3 = dom.createTextNode("\n                ");
+                var el2 = dom.createElement("div");
+                dom.setAttribute(el2, "class", "row");
+                var el3 = dom.createTextNode("\n                    ");
                 dom.appendChild(el2, el3);
-                var el3 = dom.createElement("td");
+                var el3 = dom.createElement("div");
+                dom.setAttribute(el3, "class", "col s4");
+                var el4 = dom.createTextNode("\n                      ");
+                dom.appendChild(el3, el4);
                 var el4 = dom.createElement("img");
+                dom.setAttribute(el4, "class", "img responsive-img");
                 dom.setAttribute(el4, "height", "100px");
                 dom.setAttribute(el4, "width", "100px");
                 dom.appendChild(el3, el4);
-                dom.appendChild(el2, el3);
-                var el3 = dom.createTextNode("\n                ");
-                dom.appendChild(el2, el3);
-                var el3 = dom.createElement("td");
-                var el4 = dom.createTextNode("\n                  ");
+                var el4 = dom.createTextNode("\n                    ");
                 dom.appendChild(el3, el4);
-                var el4 = dom.createElement("p");
-                dom.setAttribute(el4, "class", "movie-name");
+                dom.appendChild(el2, el3);
+                var el3 = dom.createTextNode("\n                    ");
+                dom.appendChild(el2, el3);
+                var el3 = dom.createElement("div");
+                dom.setAttribute(el3, "class", "col s8");
+                var el4 = dom.createTextNode("\n                      ");
+                dom.appendChild(el3, el4);
+                var el4 = dom.createElement("h5");
+                dom.setAttribute(el4, "class", "truncate");
                 var el5 = dom.createComment("");
                 dom.appendChild(el4, el5);
                 dom.appendChild(el3, el4);
-                var el4 = dom.createTextNode("\n                  ");
+                var el4 = dom.createTextNode("\n                      ");
                 dom.appendChild(el3, el4);
                 var el4 = dom.createElement("p");
-                var el5 = dom.createTextNode("Type: ");
-                dom.appendChild(el4, el5);
-                var el5 = dom.createComment("");
+                var el5 = dom.createElement("i");
+                dom.setAttribute(el5, "class", "small material-icons ");
+                var el6 = dom.createTextNode("");
+                dom.appendChild(el5, el6);
                 dom.appendChild(el4, el5);
                 var el5 = dom.createTextNode(" ");
                 dom.appendChild(el4, el5);
+                var el5 = dom.createComment("");
+                dom.appendChild(el4, el5);
                 dom.appendChild(el3, el4);
-                var el4 = dom.createTextNode("\n                  ");
+                var el4 = dom.createTextNode("\n                      ");
                 dom.appendChild(el3, el4);
                 var el4 = dom.createElement("p");
-                var el5 = dom.createTextNode(" Year: ");
-                dom.appendChild(el4, el5);
-                var el5 = dom.createComment("");
+                var el5 = dom.createElement("i");
+                dom.setAttribute(el5, "class", "material-icons");
+                var el6 = dom.createTextNode("");
+                dom.appendChild(el5, el6);
                 dom.appendChild(el4, el5);
                 var el5 = dom.createTextNode(" ");
                 dom.appendChild(el4, el5);
+                var el5 = dom.createComment("");
+                dom.appendChild(el4, el5);
                 dom.appendChild(el3, el4);
-                var el4 = dom.createTextNode("\n                ");
+                var el4 = dom.createTextNode("\n                    ");
                 dom.appendChild(el3, el4);
                 dom.appendChild(el2, el3);
-                var el3 = dom.createTextNode("\n              ");
+                var el3 = dom.createTextNode("\n                  ");
                 dom.appendChild(el2, el3);
                 dom.appendChild(el1, el2);
-                var el2 = dom.createTextNode("\n            ");
+                var el2 = dom.createTextNode("\n              ");
                 dom.appendChild(el1, el2);
                 dom.appendChild(el0, el1);
                 var el1 = dom.createTextNode("\n");
@@ -1388,17 +1592,17 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
               },
               buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
                 var element0 = dom.childAt(fragment, [1, 1]);
-                var element1 = dom.childAt(element0, [1, 0]);
+                var element1 = dom.childAt(element0, [1, 1]);
                 var element2 = dom.childAt(element0, [3]);
                 var morphs = new Array(5);
                 morphs[0] = dom.createAttrMorph(element1, 'src');
                 morphs[1] = dom.createAttrMorph(element1, 'alt');
                 morphs[2] = dom.createMorphAt(dom.childAt(element2, [1]), 0, 0);
-                morphs[3] = dom.createMorphAt(dom.childAt(element2, [3]), 1, 1);
-                morphs[4] = dom.createMorphAt(dom.childAt(element2, [5]), 1, 1);
+                morphs[3] = dom.createMorphAt(dom.childAt(element2, [3]), 2, 2);
+                morphs[4] = dom.createMorphAt(dom.childAt(element2, [5]), 2, 2);
                 return morphs;
               },
-              statements: [["attribute", "src", ["concat", [["subexpr", "image-helper", [["get", "movie.Poster", ["loc", [null, [12, 45], [12, 57]]], 0, 0, 0, 0]], [], ["loc", [null, [12, 30], [12, 59]]], 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["attribute", "alt", ["concat", [["get", "movie.Title", ["loc", [null, [12, 68], [12, 79]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["content", "movie.Title", ["loc", [null, [14, 40], [14, 55]]], 0, 0, 0, 0], ["content", "movie.Type", ["loc", [null, [15, 27], [15, 41]]], 0, 0, 0, 0], ["content", "movie.Year", ["loc", [null, [16, 28], [16, 42]]], 0, 0, 0, 0]],
+              statements: [["attribute", "src", ["concat", [["subexpr", "image-helper", [["get", "movie.Poster", ["loc", [null, [15, 47], [15, 59]]], 0, 0, 0, 0]], [], ["loc", [null, [15, 32], [15, 61]]], 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["attribute", "alt", ["concat", [["get", "movie.Title", ["loc", [null, [15, 70], [15, 81]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["content", "movie.Title", ["loc", [null, [18, 43], [18, 58]]], 0, 0, 0, 0], ["content", "movie.Type", ["loc", [null, [19, 71], [19, 85]]], 0, 0, 0, 0], ["content", "movie.Year", ["loc", [null, [20, 64], [20, 78]]], 0, 0, 0, 0]],
               locals: [],
               templates: []
             };
@@ -1409,12 +1613,12 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 8,
-                  "column": 8
+                  "line": 9,
+                  "column": 10
                 },
                 "end": {
-                  "line": 21,
-                  "column": 8
+                  "line": 27,
+                  "column": 10
                 }
               },
               "moduleName": "ember-imdb-search/templates/index/search.hbs"
@@ -1425,18 +1629,27 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
             hasRendered: false,
             buildFragment: function buildFragment(dom) {
               var el0 = dom.createDocumentFragment();
-              var el1 = dom.createComment("");
+              var el1 = dom.createTextNode("              ");
+              dom.appendChild(el0, el1);
+              var el1 = dom.createElement("div");
+              dom.setAttribute(el1, "class", "col s12 m4 l4");
+              var el2 = dom.createTextNode("\n");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createComment("");
+              dom.appendChild(el1, el2);
+              var el2 = dom.createTextNode("\n            ");
+              dom.appendChild(el1, el2);
+              dom.appendChild(el0, el1);
+              var el1 = dom.createTextNode("\n");
               dom.appendChild(el0, el1);
               return el0;
             },
             buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
               var morphs = new Array(1);
-              morphs[0] = dom.createMorphAt(fragment, 0, 0, contextualElement);
-              dom.insertBoundary(fragment, 0);
-              dom.insertBoundary(fragment, null);
+              morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
               return morphs;
             },
-            statements: [["block", "link-to", ["index.view", ["get", "movie.imdbID", ["loc", [null, [9, 34], [9, 46]]], 0, 0, 0, 0], ["get", "movie.Title", ["loc", [null, [9, 47], [9, 58]]], 0, 0, 0, 0]], ["title", ["subexpr", "@mut", [["get", "movie.Title", ["loc", [null, [9, 65], [9, 76]]], 0, 0, 0, 0]], [], [], 0, 0]], 0, null, ["loc", [null, [9, 10], [20, 22]]]]],
+            statements: [["block", "link-to", ["index.view", ["get", "movie.imdbID", ["loc", [null, [11, 40], [11, 52]]], 0, 0, 0, 0], ["get", "movie.Title", ["loc", [null, [11, 53], [11, 64]]], 0, 0, 0, 0]], ["title", ["subexpr", "@mut", [["get", "movie.Title", ["loc", [null, [11, 71], [11, 82]]], 0, 0, 0, 0]], [], [], 0, 0]], 0, null, ["loc", [null, [11, 16], [24, 26]]]]],
             locals: ["movie"],
             templates: [child0]
           };
@@ -1448,12 +1661,12 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
               "loc": {
                 "source": null,
                 "start": {
-                  "line": 22,
-                  "column": 8
+                  "line": 29,
+                  "column": 10
                 },
                 "end": {
-                  "line": 24,
-                  "column": 8
+                  "line": 31,
+                  "column": 10
                 }
               },
               "moduleName": "ember-imdb-search/templates/index/search.hbs"
@@ -1464,7 +1677,7 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
             hasRendered: false,
             buildFragment: function buildFragment(dom) {
               var el0 = dom.createDocumentFragment();
-              var el1 = dom.createTextNode("          ");
+              var el1 = dom.createTextNode("            ");
               dom.appendChild(el0, el1);
               var el1 = dom.createComment("");
               dom.appendChild(el0, el1);
@@ -1477,7 +1690,7 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
               morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
               return morphs;
             },
-            statements: [["content", "loader-component", ["loc", [null, [23, 10], [23, 30]]], 0, 0, 0, 0]],
+            statements: [["content", "loader-component", ["loc", [null, [30, 12], [30, 32]]], 0, 0, 0, 0]],
             locals: [],
             templates: []
           };
@@ -1488,12 +1701,12 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
             "loc": {
               "source": null,
               "start": {
-                "line": 5,
-                "column": 4
+                "line": 6,
+                "column": 6
               },
               "end": {
-                "line": 31,
-                "column": 4
+                "line": 37,
+                "column": 6
               }
             },
             "moduleName": "ember-imdb-search/templates/index/search.hbs"
@@ -1504,42 +1717,52 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
           hasRendered: false,
           buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("      ");
+            var el1 = dom.createTextNode("        ");
             dom.appendChild(el0, el1);
-            var el1 = dom.createElement("h3");
+            var el1 = dom.createElement("h4");
+            dom.setAttribute(el1, "class", "center-align");
             var el2 = dom.createTextNode("Results Found : ");
             dom.appendChild(el1, el2);
             var el2 = dom.createComment("");
             dom.appendChild(el1, el2);
             dom.appendChild(el0, el1);
-            var el1 = dom.createTextNode("\n      ");
+            var el1 = dom.createTextNode("\n        ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("div");
-            dom.setAttribute(el1, "class", "search-data");
+            dom.setAttribute(el1, "class", "row");
             var el2 = dom.createTextNode("\n");
             dom.appendChild(el1, el2);
             var el2 = dom.createComment("");
             dom.appendChild(el1, el2);
-            var el2 = dom.createComment("");
+            var el2 = dom.createTextNode("        ");
             dom.appendChild(el1, el2);
-            var el2 = dom.createTextNode("          ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("            ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            var el2 = dom.createTextNode("\n              ");
             dom.appendChild(el1, el2);
             var el2 = dom.createElement("div");
-            var el3 = dom.createTextNode("\n            ");
+            dom.setAttribute(el2, "class", "col s12 card loadmore");
+            var el3 = dom.createTextNode("\n                ");
             dom.appendChild(el2, el3);
-            var el3 = dom.createElement("div");
-            dom.setAttribute(el3, "class", "load-more");
-            var el4 = dom.createTextNode("\n              Load More (");
+            var el3 = dom.createElement("h5");
+            dom.setAttribute(el3, "class", "center-align");
+            var el4 = dom.createTextNode(" Loading ....  ");
             dom.appendChild(el3, el4);
             var el4 = dom.createComment("");
             dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode(")\n            ");
+            var el4 = dom.createTextNode(" more ");
             dom.appendChild(el3, el4);
             dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n          ");
+            var el3 = dom.createTextNode("\n              ");
             dom.appendChild(el2, el3);
             dom.appendChild(el1, el2);
-            var el2 = dom.createTextNode("\n      ");
+            var el2 = dom.createTextNode("\n            ");
             dom.appendChild(el1, el2);
             dom.appendChild(el0, el1);
             var el1 = dom.createTextNode("\n");
@@ -1547,18 +1770,16 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
             return el0;
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var element3 = dom.childAt(fragment, [3]);
-            var element4 = dom.childAt(element3, [4]);
-            var morphs = new Array(6);
+            var element3 = dom.childAt(fragment, [7]);
+            var morphs = new Array(5);
             morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 1, 1);
-            morphs[1] = dom.createMorphAt(element3, 1, 1);
-            morphs[2] = dom.createMorphAt(element3, 2, 2);
-            morphs[3] = dom.createAttrMorph(element4, 'class');
-            morphs[4] = dom.createElementMorph(element4);
-            morphs[5] = dom.createMorphAt(dom.childAt(element4, [1]), 1, 1);
+            morphs[1] = dom.createMorphAt(dom.childAt(fragment, [3]), 1, 1);
+            morphs[2] = dom.createMorphAt(fragment, 5, 5, contextualElement);
+            morphs[3] = dom.createAttrMorph(element3, 'class');
+            morphs[4] = dom.createMorphAt(dom.childAt(element3, [1, 1]), 1, 1);
             return morphs;
           },
-          statements: [["content", "model.results.totalResults", ["loc", [null, [6, 26], [6, 56]]], 0, 0, 0, 0], ["block", "each", [["get", "model.results.Search", ["loc", [null, [8, 16], [8, 36]]], 0, 0, 0, 0]], [], 0, null, ["loc", [null, [8, 8], [21, 17]]]], ["block", "if", [["get", "model.loadmore", ["loc", [null, [22, 14], [22, 28]]], 0, 0, 0, 0]], [], 1, null, ["loc", [null, [22, 8], [24, 15]]]], ["attribute", "class", ["concat", ["loadmore-panel ", ["subexpr", "load-more", [["get", "model.results.totalResults", ["loc", [null, [25, 71], [25, 97]]], 0, 0, 0, 0], ["get", "model.results.Search.length", ["loc", [null, [25, 98], [25, 125]]], 0, 0, 0, 0], "boolean"], [], ["loc", [null, [25, 59], [25, 137]]], 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["element", "action", ["loadMore"], [], ["loc", [null, [25, 15], [25, 36]]], 0, 0], ["inline", "load-more", [["get", "model.results.totalResults", ["loc", [null, [27, 37], [27, 63]]], 0, 0, 0, 0], ["get", "model.results.Search.length", ["loc", [null, [27, 64], [27, 91]]], 0, 0, 0, 0], "count"], [], ["loc", [null, [27, 25], [27, 101]]], 0, 0]],
+          statements: [["content", "model.results.totalResults", ["loc", [null, [7, 49], [7, 79]]], 0, 0, 0, 0], ["block", "each", [["get", "model.results.Search", ["loc", [null, [9, 18], [9, 38]]], 0, 0, 0, 0]], [], 0, null, ["loc", [null, [9, 10], [27, 19]]]], ["block", "if", [["get", "model.loadmore", ["loc", [null, [29, 16], [29, 30]]], 0, 0, 0, 0]], [], 1, null, ["loc", [null, [29, 10], [31, 17]]]], ["attribute", "class", ["concat", ["row ", ["subexpr", "load-more", [["get", "model.results.totalResults", ["loc", [null, [32, 40], [32, 66]]], 0, 0, 0, 0], ["get", "model.results.Search.length", ["loc", [null, [32, 67], [32, 94]]], 0, 0, 0, 0], "boolean"], [], ["loc", [null, [32, 28], [32, 106]]], 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["inline", "load-more", [["get", "model.results.totalResults", ["loc", [null, [34, 68], [34, 94]]], 0, 0, 0, 0], ["get", "model.results.Search.length", ["loc", [null, [34, 95], [34, 122]]], 0, 0, 0, 0], "count"], [], ["loc", [null, [34, 56], [34, 132]]], 0, 0]],
           locals: [],
           templates: [child0, child1]
         };
@@ -1570,12 +1791,12 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
             "loc": {
               "source": null,
               "start": {
-                "line": 31,
-                "column": 4
+                "line": 37,
+                "column": 6
               },
               "end": {
-                "line": 33,
-                "column": 4
+                "line": 41,
+                "column": 6
               }
             },
             "moduleName": "ember-imdb-search/templates/index/search.hbs"
@@ -1588,8 +1809,15 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
             var el0 = dom.createDocumentFragment();
             var el1 = dom.createTextNode("      ");
             dom.appendChild(el0, el1);
-            var el1 = dom.createElement("h2");
-            var el2 = dom.createComment("");
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1, "class", "row card hoverable center-align");
+            var el2 = dom.createTextNode("\n        ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("h2");
+            var el3 = dom.createComment("");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n      ");
             dom.appendChild(el1, el2);
             dom.appendChild(el0, el1);
             var el1 = dom.createTextNode("\n");
@@ -1598,10 +1826,10 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
             var morphs = new Array(1);
-            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1]), 0, 0);
+            morphs[0] = dom.createMorphAt(dom.childAt(fragment, [1, 1]), 0, 0);
             return morphs;
           },
-          statements: [["content", "model.results.Error", ["loc", [null, [32, 10], [32, 33]]], 0, 0, 0, 0]],
+          statements: [["content", "model.results.Error", ["loc", [null, [39, 12], [39, 35]]], 0, 0, 0, 0]],
           locals: [],
           templates: []
         };
@@ -1612,12 +1840,12 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
           "loc": {
             "source": null,
             "start": {
-              "line": 4,
-              "column": 2
+              "line": 5,
+              "column": 4
             },
             "end": {
-              "line": 34,
-              "column": 2
+              "line": 42,
+              "column": 4
             }
           },
           "moduleName": "ember-imdb-search/templates/index/search.hbs"
@@ -1639,7 +1867,7 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
           dom.insertBoundary(fragment, null);
           return morphs;
         },
-        statements: [["block", "if", [["get", "model.results.Response", ["loc", [null, [5, 10], [5, 32]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [5, 4], [33, 11]]]]],
+        statements: [["block", "if", [["get", "model.results.Response", ["loc", [null, [6, 12], [6, 34]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [6, 6], [41, 13]]]]],
         locals: [],
         templates: [child0, child1]
       };
@@ -1654,7 +1882,7 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
             "column": 0
           },
           "end": {
-            "line": 37,
+            "line": 46,
             "column": 0
           }
         },
@@ -1667,10 +1895,19 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
       buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "search-results");
-        var el2 = dom.createTextNode("\n");
+        dom.setAttribute(el1, "class", "row");
+        var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "col s12");
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("  ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
@@ -1683,11 +1920,11 @@ define("ember-imdb-search/templates/index/search", ["exports"], function (export
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var morphs = new Array(2);
-        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0]), 1, 1);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0, 1]), 1, 1);
         morphs[1] = dom.createMorphAt(fragment, 2, 2, contextualElement);
         return morphs;
       },
-      statements: [["block", "if", [["get", "model.loading", ["loc", [null, [2, 8], [2, 21]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [2, 2], [34, 9]]]], ["content", "outlet", ["loc", [null, [36, 0], [36, 10]]], 0, 0, 0, 0]],
+      statements: [["block", "if", [["get", "model.loading", ["loc", [null, [3, 10], [3, 23]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [3, 4], [42, 11]]]], ["content", "outlet", ["loc", [null, [45, 0], [45, 10]]], 0, 0, 0, 0]],
       locals: [],
       templates: [child0, child1]
     };
@@ -1702,11 +1939,11 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
           "loc": {
             "source": null,
             "start": {
-              "line": 2,
+              "line": 3,
               "column": 2
             },
             "end": {
-              "line": 4,
+              "line": 5,
               "column": 2
             }
           },
@@ -1731,7 +1968,7 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
           morphs[0] = dom.createMorphAt(fragment, 1, 1, contextualElement);
           return morphs;
         },
-        statements: [["content", "loader-component", ["loc", [null, [3, 4], [3, 24]]], 0, 0, 0, 0]],
+        statements: [["content", "loader-component", ["loc", [null, [4, 4], [4, 24]]], 0, 0, 0, 0]],
         locals: [],
         templates: []
       };
@@ -1744,11 +1981,11 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
             "loc": {
               "source": null,
               "start": {
-                "line": 5,
+                "line": 6,
                 "column": 4
               },
               "end": {
-                "line": 30,
+                "line": 34,
                 "column": 4
               }
             },
@@ -1760,304 +1997,445 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
           hasRendered: false,
           buildFragment: function buildFragment(dom) {
             var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("      ");
+            var el1 = dom.createTextNode("    ");
             dom.appendChild(el0, el1);
-            var el1 = dom.createElement("table");
-            var el2 = dom.createTextNode("\n        ");
+            var el1 = dom.createElement("div");
+            dom.setAttribute(el1, "class", " view card");
+            var el2 = dom.createTextNode("\n      ");
             dom.appendChild(el1, el2);
-            var el2 = dom.createElement("tr");
-            var el3 = dom.createTextNode("\n          ");
+            var el2 = dom.createElement("div");
+            dom.setAttribute(el2, "class", "col s12 m3 l3");
+            var el3 = dom.createTextNode("\n        ");
             dom.appendChild(el2, el3);
-            var el3 = dom.createElement("td");
-            dom.setAttribute(el3, "class", "poster");
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("img");
-            dom.setAttribute(el4, "height", "550px");
-            dom.setAttribute(el4, "width", "388px");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n          ");
-            dom.appendChild(el3, el4);
-            dom.appendChild(el2, el3);
-            var el3 = dom.createTextNode("\n          ");
-            dom.appendChild(el2, el3);
-            var el3 = dom.createElement("td");
-            dom.setAttribute(el3, "class", "movie-data");
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("h1");
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Type");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(" : ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Actors");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(" : ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Director");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(" : ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(". ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Writer");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Language");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(". ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Country");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Released");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(". ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Run Time");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Genre");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Plot");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Awards");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("BoxOffice");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(" : ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("imdbRating");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("tomatoRating");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(" ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createElement("a");
-            dom.setAttribute(el5, "target", "_blank");
-            var el6 = dom.createTextNode("Rotten Tomatoes");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Production");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("Website");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n            ");
-            dom.appendChild(el3, el4);
-            var el4 = dom.createElement("p");
-            var el5 = dom.createElement("span");
-            dom.setAttribute(el5, "class", "key");
-            var el6 = dom.createTextNode("DVD");
-            dom.appendChild(el5, el6);
-            dom.appendChild(el4, el5);
-            var el5 = dom.createTextNode(": ");
-            dom.appendChild(el4, el5);
-            var el5 = dom.createComment("");
-            dom.appendChild(el4, el5);
-            dom.appendChild(el3, el4);
-            var el4 = dom.createTextNode("\n          ");
-            dom.appendChild(el3, el4);
+            var el3 = dom.createElement("img");
+            dom.setAttribute(el3, "class", "img responsive-img zoombox");
+            dom.setAttribute(el3, "max-width", "100%");
             dom.appendChild(el2, el3);
             var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("div");
+            dom.setAttribute(el3, "class", "left-align");
+            var el4 = dom.createTextNode("\n          ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("span");
+            var el5 = dom.createElement("small");
+            var el6 = dom.createTextNode(" click to enlarge ");
+            dom.appendChild(el5, el6);
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode("\n        ");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n      ");
             dom.appendChild(el2, el3);
             dom.appendChild(el1, el2);
             var el2 = dom.createTextNode("\n      ");
             dom.appendChild(el1, el2);
+            var el2 = dom.createElement("div");
+            dom.setAttribute(el2, "class", "col s12 m8 l8");
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("a");
+            var el4 = dom.createElement("h3");
+            var el5 = dom.createComment("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Type");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" : ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Actors");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" : ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Director");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" : ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(". ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Writer");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Language");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(". ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Country");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Released");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(". ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Run Time ");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Genre");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Plot");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(":  ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Awards");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("BoxOffice");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" : ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("imdbRating");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("tomatoRating");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("a");
+            dom.setAttribute(el4, "target", "_blank");
+            var el5 = dom.createTextNode("Rotten Tomatoes");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Production");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("Website");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(":  ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(" ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n        ");
+            dom.appendChild(el2, el3);
+            var el3 = dom.createElement("p");
+            var el4 = dom.createElement("span");
+            dom.setAttribute(el4, "class", "key");
+            var el5 = dom.createTextNode("DVD");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createTextNode(": ");
+            dom.appendChild(el3, el4);
+            var el4 = dom.createElement("i");
+            dom.setAttribute(el4, "class", "material-icons");
+            var el5 = dom.createTextNode("");
+            dom.appendChild(el4, el5);
+            dom.appendChild(el3, el4);
+            var el4 = dom.createComment("");
+            dom.appendChild(el3, el4);
+            dom.appendChild(el2, el3);
+            var el3 = dom.createTextNode("\n      ");
+            dom.appendChild(el2, el3);
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n    ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment(" to init zoom box ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createComment("");
             dom.appendChild(el0, el1);
             var el1 = dom.createTextNode("\n");
             dom.appendChild(el0, el1);
             return el0;
           },
           buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
-            var element0 = dom.childAt(fragment, [1, 1]);
+            var element0 = dom.childAt(fragment, [1]);
             var element1 = dom.childAt(element0, [1, 1]);
             var element2 = dom.childAt(element0, [3]);
-            var element3 = dom.childAt(element2, [7]);
-            var element4 = dom.childAt(element2, [9]);
-            var element5 = dom.childAt(element2, [11]);
-            var element6 = dom.childAt(element2, [23]);
-            var element7 = dom.childAt(element6, [4]);
-            var morphs = new Array(21);
+            var element3 = dom.childAt(element2, [1]);
+            var element4 = dom.childAt(element2, [7]);
+            var element5 = dom.childAt(element2, [9]);
+            var element6 = dom.childAt(element2, [11]);
+            var element7 = dom.childAt(element2, [23]);
+            var element8 = dom.childAt(element7, [6]);
+            var morphs = new Array(24);
             morphs[0] = dom.createAttrMorph(element1, 'src');
-            morphs[1] = dom.createAttrMorph(element1, 'alt');
-            morphs[2] = dom.createMorphAt(dom.childAt(element2, [1]), 0, 0);
-            morphs[3] = dom.createMorphAt(dom.childAt(element2, [3]), 2, 2);
-            morphs[4] = dom.createMorphAt(dom.childAt(element2, [5]), 2, 2);
-            morphs[5] = dom.createMorphAt(element3, 2, 2);
-            morphs[6] = dom.createMorphAt(element3, 6, 6);
-            morphs[7] = dom.createMorphAt(element4, 2, 2);
-            morphs[8] = dom.createMorphAt(element4, 6, 6);
-            morphs[9] = dom.createMorphAt(element5, 2, 2);
-            morphs[10] = dom.createMorphAt(element5, 6, 6);
-            morphs[11] = dom.createMorphAt(dom.childAt(element2, [13]), 2, 2);
-            morphs[12] = dom.createMorphAt(dom.childAt(element2, [15]), 2, 2);
-            morphs[13] = dom.createMorphAt(dom.childAt(element2, [17]), 2, 2);
-            morphs[14] = dom.createMorphAt(dom.childAt(element2, [19]), 2, 2);
-            morphs[15] = dom.createMorphAt(dom.childAt(element2, [21]), 2, 2);
-            morphs[16] = dom.createMorphAt(element6, 2, 2);
-            morphs[17] = dom.createAttrMorph(element7, 'href');
-            morphs[18] = dom.createMorphAt(dom.childAt(element2, [25]), 2, 2);
-            morphs[19] = dom.createMorphAt(dom.childAt(element2, [27]), 2, 2);
-            morphs[20] = dom.createMorphAt(dom.childAt(element2, [29]), 2, 2);
+            morphs[1] = dom.createAttrMorph(element1, 'data-caption');
+            morphs[2] = dom.createAttrMorph(element1, 'alt');
+            morphs[3] = dom.createAttrMorph(element3, 'href');
+            morphs[4] = dom.createMorphAt(dom.childAt(element3, [0]), 0, 0);
+            morphs[5] = dom.createMorphAt(dom.childAt(element2, [3]), 4, 4);
+            morphs[6] = dom.createMorphAt(dom.childAt(element2, [5]), 4, 4);
+            morphs[7] = dom.createMorphAt(element4, 4, 4);
+            morphs[8] = dom.createMorphAt(element4, 10, 10);
+            morphs[9] = dom.createMorphAt(element5, 4, 4);
+            morphs[10] = dom.createMorphAt(element5, 10, 10);
+            morphs[11] = dom.createMorphAt(element6, 4, 4);
+            morphs[12] = dom.createMorphAt(element6, 10, 10);
+            morphs[13] = dom.createMorphAt(dom.childAt(element2, [13]), 4, 4);
+            morphs[14] = dom.createMorphAt(dom.childAt(element2, [15]), 4, 4);
+            morphs[15] = dom.createMorphAt(dom.childAt(element2, [17]), 4, 4);
+            morphs[16] = dom.createMorphAt(dom.childAt(element2, [19]), 4, 4);
+            morphs[17] = dom.createMorphAt(dom.childAt(element2, [21]), 4, 4);
+            morphs[18] = dom.createMorphAt(element7, 4, 4);
+            morphs[19] = dom.createAttrMorph(element8, 'href');
+            morphs[20] = dom.createMorphAt(dom.childAt(element2, [25]), 4, 4);
+            morphs[21] = dom.createMorphAt(dom.childAt(element2, [27]), 4, 4);
+            morphs[22] = dom.createMorphAt(dom.childAt(element2, [29]), 3, 3);
+            morphs[23] = dom.createMorphAt(fragment, 5, 5, contextualElement);
             return morphs;
           },
-          statements: [["attribute", "src", ["concat", [["subexpr", "image-helper", [["get", "model.results.Poster", ["loc", [null, [9, 37], [9, 57]]], 0, 0, 0, 0]], [], ["loc", [null, [9, 22], [9, 59]]], 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["attribute", "alt", ["concat", [["get", "model.results.Title", ["loc", [null, [9, 68], [9, 87]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["content", "model.results.Title", ["loc", [null, [12, 16], [12, 39]]], 0, 0, 0, 0], ["content", "model.results.Type", ["loc", [null, [13, 47], [13, 69]]], 0, 0, 0, 0], ["content", "model.results.Actors", ["loc", [null, [14, 49], [14, 73]]], 0, 0, 0, 0], ["content", "model.results.Director", ["loc", [null, [15, 51], [15, 77]]], 0, 0, 0, 0], ["content", "model.results.Writer", ["loc", [null, [15, 112], [15, 136]]], 0, 0, 0, 0], ["content", "model.results.Language", ["loc", [null, [16, 50], [16, 76]]], 0, 0, 0, 0], ["content", "model.results.Country", ["loc", [null, [16, 112], [16, 137]]], 0, 0, 0, 0], ["content", "model.results.Released", ["loc", [null, [17, 50], [17, 76]]], 0, 0, 0, 0], ["content", "model.results.Runtime", ["loc", [null, [17, 113], [17, 138]]], 0, 0, 0, 0], ["content", "model.results.Genre", ["loc", [null, [18, 47], [18, 70]]], 0, 0, 0, 0], ["content", "model.results.Plot", ["loc", [null, [19, 46], [19, 68]]], 0, 0, 0, 0], ["content", "model.results.Awards", ["loc", [null, [20, 48], [20, 72]]], 0, 0, 0, 0], ["content", "model.results.BoxOffice", ["loc", [null, [21, 52], [21, 79]]], 0, 0, 0, 0], ["content", "model.results.imdbRating", ["loc", [null, [22, 52], [22, 80]]], 0, 0, 0, 0], ["content", "model.results.tomatoRating", ["loc", [null, [23, 54], [23, 84]]], 0, 0, 0, 0], ["attribute", "href", ["concat", [["get", "model.results.tomatoURL", ["loc", [null, [23, 96], [23, 119]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["content", "model.results.Production", ["loc", [null, [24, 52], [24, 80]]], 0, 0, 0, 0], ["content", "model.results.Website", ["loc", [null, [25, 49], [25, 74]]], 0, 0, 0, 0], ["content", "model.results.DVD", ["loc", [null, [26, 45], [26, 66]]], 0, 0, 0, 0]],
+          statements: [["attribute", "src", ["concat", [["subexpr", "image-helper", [["get", "model.results.Poster", ["loc", [null, [9, 33], [9, 53]]], 0, 0, 0, 0]], [], ["loc", [null, [9, 18], [9, 55]]], 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["attribute", "data-caption", ["concat", [["get", "model.results.Title", ["loc", [null, [9, 73], [9, 92]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["attribute", "alt", ["concat", [["get", "model.results.Title", ["loc", [null, [9, 104], [9, 123]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["attribute", "href", ["concat", [["get", "window.location.url", ["loc", [null, [15, 19], [15, 38]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["content", "model.results.Title", ["loc", [null, [15, 46], [15, 69]]], 0, 0, 0, 0], ["content", "model.results.Type", ["loc", [null, [16, 82], [16, 104]]], 0, 0, 0, 0], ["content", "model.results.Actors", ["loc", [null, [17, 84], [17, 108]]], 0, 0, 0, 0], ["content", "model.results.Director", ["loc", [null, [18, 86], [18, 112]]], 0, 0, 0, 0], ["content", "model.results.Writer", ["loc", [null, [18, 186], [18, 210]]], 0, 0, 0, 0], ["content", "model.results.Language", ["loc", [null, [19, 85], [19, 111]]], 0, 0, 0, 0], ["content", "model.results.Country", ["loc", [null, [19, 186], [19, 211]]], 0, 0, 0, 0], ["content", "model.results.Released", ["loc", [null, [20, 85], [20, 111]]], 0, 0, 0, 0], ["content", "model.results.Runtime", ["loc", [null, [20, 188], [20, 213]]], 0, 0, 0, 0], ["content", "model.results.Genre", ["loc", [null, [21, 82], [21, 105]]], 0, 0, 0, 0], ["content", "model.results.Plot", ["loc", [null, [22, 82], [22, 104]]], 0, 0, 0, 0], ["content", "model.results.Awards", ["loc", [null, [23, 83], [23, 107]]], 0, 0, 0, 0], ["content", "model.results.BoxOffice", ["loc", [null, [24, 87], [24, 114]]], 0, 0, 0, 0], ["content", "model.results.imdbRating", ["loc", [null, [25, 87], [25, 115]]], 0, 0, 0, 0], ["content", "model.results.tomatoRating", ["loc", [null, [26, 89], [26, 119]]], 0, 0, 0, 0], ["attribute", "href", ["concat", [["get", "model.results.tomatoURL", ["loc", [null, [26, 131], [26, 154]]], 0, 0, 0, 0]], 0, 0, 0, 0, 0], 0, 0, 0, 0], ["content", "model.results.Production", ["loc", [null, [27, 87], [27, 115]]], 0, 0, 0, 0], ["content", "model.results.Website", ["loc", [null, [28, 85], [28, 110]]], 0, 0, 0, 0], ["content", "model.results.DVD", ["loc", [null, [29, 79], [29, 100]]], 0, 0, 0, 0], ["content", "zoombox-init", ["loc", [null, [33, 4], [33, 20]]], 0, 0, 0, 0]],
           locals: [],
           templates: []
         };
@@ -2069,11 +2447,11 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
             "loc": {
               "source": null,
               "start": {
-                "line": 30,
+                "line": 34,
                 "column": 4
               },
               "end": {
-                "line": 32,
+                "line": 36,
                 "column": 4
               }
             },
@@ -2109,11 +2487,11 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
           "loc": {
             "source": null,
             "start": {
-              "line": 4,
+              "line": 5,
               "column": 2
             },
             "end": {
-              "line": 33,
+              "line": 37,
               "column": 2
             }
           },
@@ -2136,7 +2514,7 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
           dom.insertBoundary(fragment, null);
           return morphs;
         },
-        statements: [["block", "if", [["get", "model.results.Response", ["loc", [null, [5, 10], [5, 32]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [5, 4], [32, 11]]]]],
+        statements: [["block", "if", [["get", "model.results.Response", ["loc", [null, [6, 10], [6, 32]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [6, 4], [36, 11]]]]],
         locals: [],
         templates: [child0, child1]
       };
@@ -2151,7 +2529,7 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
             "column": 0
           },
           "end": {
-            "line": 36,
+            "line": 41,
             "column": 0
           }
         },
@@ -2164,10 +2542,17 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
       buildFragment: function buildFragment(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("div");
-        dom.setAttribute(el1, "class", "movie");
-        var el2 = dom.createTextNode("\n");
+        dom.setAttribute(el1, "class", "row");
+        var el2 = dom.createTextNode("\n  ");
         dom.appendChild(el1, el2);
-        var el2 = dom.createComment("");
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2, "class", "col s12");
+        var el3 = dom.createTextNode("\n");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createComment("");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
         var el1 = dom.createTextNode("\n");
@@ -2180,11 +2565,11 @@ define("ember-imdb-search/templates/index/view", ["exports"], function (exports)
       },
       buildRenderNodes: function buildRenderNodes(dom, fragment, contextualElement) {
         var morphs = new Array(2);
-        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0]), 1, 1);
+        morphs[0] = dom.createMorphAt(dom.childAt(fragment, [0, 1]), 1, 1);
         morphs[1] = dom.createMorphAt(fragment, 2, 2, contextualElement);
         return morphs;
       },
-      statements: [["block", "if", [["get", "model.Loading", ["loc", [null, [2, 8], [2, 21]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [2, 2], [33, 9]]]], ["content", "outlet", ["loc", [null, [35, 0], [35, 10]]], 0, 0, 0, 0]],
+      statements: [["block", "if", [["get", "model.Loading", ["loc", [null, [3, 8], [3, 21]]], 0, 0, 0, 0]], [], 0, 1, ["loc", [null, [3, 2], [37, 9]]]], ["content", "outlet", ["loc", [null, [40, 0], [40, 10]]], 0, 0, 0, 0]],
       locals: [],
       templates: [child0, child1]
     };
@@ -2259,7 +2644,7 @@ catch(err) {
 /* jshint ignore:start */
 
 if (!runningTests) {
-  require("ember-imdb-search/app")["default"].create({"name":"ember-imdb-search","version":"0.0.0+667e8c6e"});
+  require("ember-imdb-search/app")["default"].create({"name":"ember-imdb-search","version":"0.0.0+3560aef0"});
 }
 
 /* jshint ignore:end */

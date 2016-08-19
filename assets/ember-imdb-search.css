@@ -1,3 +1,6 @@
+html {
+  height: 100%; }
+
 body {
   width: 100%;
   margin: 0; }
@@ -5,99 +8,61 @@ body {
 a {
   text-decoration: none; }
 
-.search {
-  text-align: center;
-  height: 95vh;
+.magnifier {
+  position: relative;
+  bottom: 33px;
+  left: 93%;
+  cursor: pointer; }
+
+.title a {
+  color: #57beff; }
+
+.chip {
+  cursor: pointer; }
+
+.chip.active {
+  background: #57beff; }
+
+.search-year {
+  width: 265px !important; }
+
+input {
+  margin-bottom: 0px !important; }
+
+input:focus {
+  border-bottom: 1px solid #57beff !important;
+  box-shadow: 0 1px 0 0 #57beff !important; }
+
+.card {
+  overflow: hidden; }
+
+.card.search {
+  height: 150px; }
+
+p i.material-icons {
+  color: #999;
+  position: relative;
+  top: 7px; }
+
+p i.director {
+  transform: rotateY(140deg); }
+
+div.loadmore {
+  height: 50px; }
+
+p span.key {
+  font-weight: bold; }
+
+.view.card {
+  height: 800px;
   overflow: scroll; }
-  .search .search-title {
-    color: #57beff; }
-  .search .search-box {
-    border: 1px solid #4D84C8;
-    height: 35px;
-    width: 40%;
-    font-size: 1em;
-    padding-left: 20px;
-    outline: none; }
-  .search .search-box:active,
-  .search .search-box:hover {
-    border: 1px solid #57beff; }
-  .search .search-box::-webkit-input-placeholder {
-    color: black;
-    position: relative;
-    left: 20px;
-    font-size: 0.7em; }
-  .search .search-btn {
-    border: 1px solid #4D84C8;
-    height: 39px;
-    position: relative;
-    top: 5px;
-    left: -5px;
-    background: #57BEFF;
-    outline: none;
-    cursor: pointer; }
-  .search .advance-search {
-    text-decoration: none;
-    color: #57BEFF;
-    padding: 10px; }
-  .search .advance-search-panel {
-    padding-top: 25px; }
-    .search .advance-search-panel .search-type-group {
-      border: 1px solid #57beff;
-      display: inline; }
-    .search .advance-search-panel .search-type {
-      cursor: pointer;
-      padding: 10px; }
-    .search .advance-search-panel .search-type.active, .search .advance-search-panel .search-type:hover {
-      background-color: #57beff;
-      color: white; }
-    .search .advance-search-panel .search-year {
-      border: 1px solid #57beff; }
 
-.search-data {
-  padding-left: 15%;
-  padding-right: 15%;
-  text-align: left; }
-  .search-data a {
+.breadcrumbs {
+  background: #E6E6E6;
+  position: relative;
+  top: -10px; }
+  .breadcrumbs i {
     color: black; }
-  .search-data table {
-    display: inline; }
-    .search-data table tr:hover {
-      background: #57beff;
-      color: white;
-      border: 1px solid black; }
-    .search-data table .movie-name {
-      width: 100px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis; }
-  .search-data .load-more {
-    width: 100%;
-    padding: 10px;
-    background: #57beff;
-    text-align: center;
-    color: white;
-    font-size: 1.5em;
-    margin-bottom: 30px; }
-
-.movie {
-  padding-left: 10%;
-  padding-right: 10%;
-  padding-top: 15px; }
-  .movie .movie-data {
-    padding-left: 15px;
-    text-align: left; }
-  .movie .key {
-    font-weight: bold; }
-
-.loadmore-panel.hidden {
-  display: none; }
-
-.breadcrumb {
-  float: right;
-  padding: 10px; }
-  .breadcrumb a {
-    color: #57beff;
-    padding: 5px; }
 
 .spinner {
   width: 40px;
@@ -130,7 +95,6 @@ a {
   color: white;
   background: black;
   padding-top: 10px;
-  padding-bottom: 10px;
   width: 100%;
   position: fixed;
   bottom: 0px;
